@@ -4,6 +4,8 @@
  */
 package com.equipo4.bibliotecamusical.presentacion;
 
+import javax.swing.ImageIcon;
+
 /**
  *
  * @author oscar
@@ -17,7 +19,19 @@ public class FrmLogin extends javax.swing.JFrame {
      */
     public FrmLogin() {
         initComponents();
+        try {
+    java.net.URL urlPerfil = getClass().getResource("/imagenes/imagen-de-perfil2.png");
+    if (urlPerfil != null) {
+        ImageIcon iconOriginal = new ImageIcon(urlPerfil);
+        java.awt.Image imgEscalada = iconOriginal.getImage().getScaledInstance(
+                btnIconoPerfil.getWidth(), btnIconoPerfil.getHeight(), java.awt.Image.SCALE_SMOOTH);
+        btnIconoPerfil.setIcon(new ImageIcon(imgEscalada));
+    }
+} catch (Exception e) {
+    System.out.println("No se pudo cargar la foto de perfil: " + e.getMessage());
+}
         this.getContentPane().setBackground(new java.awt.Color(25, 25, 25));
+        
     }
 
     /**
@@ -32,13 +46,17 @@ public class FrmLogin extends javax.swing.JFrame {
         txtCorreoLogin = new javax.swing.JTextField();
         txtContrasenaLogin = new javax.swing.JPasswordField();
         btnIngresar = new javax.swing.JButton();
+        btnIconoPerfil = new javax.swing.JButton();
+        jButton1 = new javax.swing.JButton();
 
         setDefaultCloseOperation(javax.swing.WindowConstants.EXIT_ON_CLOSE);
         setBackground(new java.awt.Color(25, 25, 25));
 
+        txtCorreoLogin.setColumns(15);
         txtCorreoLogin.setText("Usuario");
         txtCorreoLogin.addActionListener(this::txtCorreoLoginActionPerformed);
 
+        txtContrasenaLogin.setColumns(15);
         txtContrasenaLogin.setText("Contraseña");
 
         btnIngresar.setBackground(new java.awt.Color(255, 0, 255));
@@ -46,32 +64,50 @@ public class FrmLogin extends javax.swing.JFrame {
         btnIngresar.setText("ENTRAR");
         btnIngresar.addActionListener(this::btnIngresarActionPerformed);
 
+        btnIconoPerfil.setBorderPainted(false);
+        btnIconoPerfil.setContentAreaFilled(false);
+
+        jButton1.setBackground(new java.awt.Color(255, 0, 255));
+        jButton1.setForeground(new java.awt.Color(255, 255, 255));
+        jButton1.setText("Crear Cuenta");
+        jButton1.addActionListener(this::jButton1ActionPerformed);
+
         javax.swing.GroupLayout layout = new javax.swing.GroupLayout(getContentPane());
         getContentPane().setLayout(layout);
         layout.setHorizontalGroup(
             layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGroup(layout.createSequentialGroup()
+            .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, layout.createSequentialGroup()
+                .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                .addComponent(btnIconoPerfil, javax.swing.GroupLayout.PREFERRED_SIZE, 92, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
+            .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, layout.createSequentialGroup()
+                .addContainerGap(118, Short.MAX_VALUE)
                 .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.TRAILING)
-                    .addComponent(btnIngresar)
                     .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                        .addGroup(layout.createSequentialGroup()
-                            .addGap(155, 155, 155)
-                            .addComponent(txtCorreoLogin, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
-                        .addGroup(layout.createSequentialGroup()
-                            .addGap(146, 146, 146)
-                            .addComponent(txtContrasenaLogin, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))))
-                .addContainerGap(181, Short.MAX_VALUE))
+                        .addComponent(txtCorreoLogin, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                        .addComponent(txtContrasenaLogin, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
+                    .addGroup(layout.createSequentialGroup()
+                        .addComponent(btnIngresar)
+                        .addGap(56, 56, 56))
+                    .addGroup(layout.createSequentialGroup()
+                        .addComponent(jButton1)
+                        .addGap(43, 43, 43)))
+                .addGap(103, 103, 103))
         );
         layout.setVerticalGroup(
             layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(layout.createSequentialGroup()
-                .addGap(50, 50, 50)
+                .addContainerGap(39, Short.MAX_VALUE)
+                .addComponent(btnIconoPerfil, javax.swing.GroupLayout.PREFERRED_SIZE, 62, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addGap(18, 18, 18)
                 .addComponent(txtCorreoLogin, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addGap(37, 37, 37)
+                .addGap(18, 18, 18)
                 .addComponent(txtContrasenaLogin, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addGap(54, 54, 54)
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
                 .addComponent(btnIngresar)
-                .addContainerGap(92, Short.MAX_VALUE))
+                .addGap(32, 32, 32)
+                .addComponent(jButton1)
+                .addGap(29, 29, 29))
         );
 
         pack();
@@ -111,6 +147,17 @@ try {
         // TODO add your handling code here:
     }//GEN-LAST:event_txtCorreoLoginActionPerformed
 
+    private void jButton1ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButton1ActionPerformed
+        try {
+    FrmRegistro pantallaRegistro = new FrmRegistro();
+    pantallaRegistro.setVisible(true);
+    
+    this.dispose();
+} catch (Exception ex) {
+    System.out.println("Error al abrir la pantalla de registro: " + ex.getMessage());
+}
+    }//GEN-LAST:event_jButton1ActionPerformed
+
     /**
      * @param args the command line arguments
      */
@@ -137,7 +184,9 @@ try {
     }
 
     // Variables declaration - do not modify//GEN-BEGIN:variables
+    private javax.swing.JButton btnIconoPerfil;
     private javax.swing.JButton btnIngresar;
+    private javax.swing.JButton jButton1;
     private javax.swing.JPasswordField txtContrasenaLogin;
     private javax.swing.JTextField txtCorreoLogin;
     // End of variables declaration//GEN-END:variables

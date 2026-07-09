@@ -126,6 +126,7 @@ try {
         btnCerrarSesion.setText("Cerrar Sesión");
         btnCerrarSesion.addActionListener(this::btnCerrarSesionActionPerformed);
 
+        txtNuevoNombre.setColumns(15);
         txtNuevoNombre.setText("Actualizar Nombre");
 
         btnActualizar.setBackground(new java.awt.Color(255, 0, 255));
@@ -133,6 +134,7 @@ try {
         btnActualizar.setText("Actualizar");
         btnActualizar.addActionListener(this::btnActualizarActionPerformed);
 
+        txtGeneroRestringido.setColumns(15);
         txtGeneroRestringido.setText("Genero Restringido");
 
         btnBloquearGenero.setBackground(new java.awt.Color(255, 0, 255));
@@ -143,6 +145,7 @@ try {
         cmbTipoFav.setModel(new javax.swing.DefaultComboBoxModel<>(new String[] { "artista", "album", "cancion" }));
         cmbTipoFav.addActionListener(this::cmbTipoFavActionPerformed);
 
+        txtIdElemento.setColumns(15);
         txtIdElemento.setText("ID del artista o canción");
 
         txtGeneroFav.setText("género");

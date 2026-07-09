@@ -33,21 +33,30 @@ public class FrmRegistro extends javax.swing.JFrame {
         txtCorreo = new javax.swing.JTextField();
         txtContrasena = new javax.swing.JPasswordField();
         btnRegistrar = new javax.swing.JButton();
+        jButton1 = new javax.swing.JButton();
 
         setDefaultCloseOperation(javax.swing.WindowConstants.EXIT_ON_CLOSE);
         setBackground(new java.awt.Color(25, 25, 25));
 
+        txtNombre.setColumns(15);
         txtNombre.setText("Nombre de usuario");
         txtNombre.addActionListener(this::txtNombreActionPerformed);
 
+        txtCorreo.setColumns(15);
         txtCorreo.setText("Correo electrónico");
 
+        txtContrasena.setColumns(15);
         txtContrasena.setText("txtContrasena");
 
         btnRegistrar.setBackground(new java.awt.Color(255, 0, 255));
         btnRegistrar.setForeground(new java.awt.Color(255, 255, 255));
         btnRegistrar.setText("Registrarse");
         btnRegistrar.addActionListener(this::btnRegistrarActionPerformed);
+
+        jButton1.setBackground(new java.awt.Color(255, 0, 255));
+        jButton1.setForeground(new java.awt.Color(255, 255, 255));
+        jButton1.setText("Cancelar");
+        jButton1.addActionListener(this::jButton1ActionPerformed);
 
         javax.swing.GroupLayout layout = new javax.swing.GroupLayout(getContentPane());
         getContentPane().setLayout(layout);
@@ -57,27 +66,31 @@ public class FrmRegistro extends javax.swing.JFrame {
                 .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                     .addGroup(layout.createSequentialGroup()
                         .addGap(123, 123, 123)
-                        .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.TRAILING)
-                            .addComponent(btnRegistrar, javax.swing.GroupLayout.PREFERRED_SIZE, 116, javax.swing.GroupLayout.PREFERRED_SIZE)
-                            .addComponent(txtCorreo, javax.swing.GroupLayout.PREFERRED_SIZE, 124, javax.swing.GroupLayout.PREFERRED_SIZE)
-                            .addComponent(txtNombre, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)))
+                        .addComponent(txtNombre, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
+                    .addComponent(jButton1)
                     .addGroup(layout.createSequentialGroup()
                         .addGap(144, 144, 144)
-                        .addComponent(txtContrasena, javax.swing.GroupLayout.PREFERRED_SIZE, 94, javax.swing.GroupLayout.PREFERRED_SIZE)))
-                .addContainerGap(153, Short.MAX_VALUE))
+                        .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                            .addComponent(txtCorreo, javax.swing.GroupLayout.PREFERRED_SIZE, 124, javax.swing.GroupLayout.PREFERRED_SIZE)
+                            .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, layout.createSequentialGroup()
+                                .addComponent(txtContrasena, javax.swing.GroupLayout.PREFERRED_SIZE, 94, javax.swing.GroupLayout.PREFERRED_SIZE)
+                                .addGap(18, 18, 18))
+                            .addComponent(btnRegistrar, javax.swing.GroupLayout.PREFERRED_SIZE, 116, javax.swing.GroupLayout.PREFERRED_SIZE))))
+                .addContainerGap(98, Short.MAX_VALUE))
         );
         layout.setVerticalGroup(
             layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(layout.createSequentialGroup()
-                .addContainerGap(114, Short.MAX_VALUE)
+                .addComponent(jButton1)
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, 91, Short.MAX_VALUE)
                 .addComponent(txtNombre, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
                 .addComponent(txtCorreo, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
                 .addGap(18, 18, 18)
                 .addComponent(txtContrasena, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addGap(31, 31, 31)
+                .addGap(34, 34, 34)
                 .addComponent(btnRegistrar)
-                .addGap(36, 36, 36))
+                .addGap(33, 33, 33))
         );
 
         pack();
@@ -104,7 +117,20 @@ try {
         javax.swing.JOptionPane.showMessageDialog(this, "Por favor, llena todos los campos.", "Advertencia", javax.swing.JOptionPane.WARNING_MESSAGE);
         return;
     }
+javax.swing.JOptionPane.showMessageDialog(this, 
+        "¡Cuenta creada con éxito! Ahora puedes iniciar sesión.", 
+        "Registro Exitoso", 
+        javax.swing.JOptionPane.INFORMATION_MESSAGE);
 
+try {
+    FrmLogin pantallaLogin = new FrmLogin();
+    pantallaLogin.setVisible(true);
+    
+    this.dispose();
+    
+} catch (Exception ex) {
+    System.out.println("Error al redirigir al login: " + ex.getMessage());
+}
     com.equipo4.bibliotecamusical.dominio.Usuario nuevoUsuario = new com.equipo4.bibliotecamusical.dominio.Usuario();
     nuevoUsuario.setNombreUsuario(nombre);
     nuevoUsuario.setCorreoElectronico(correo);
@@ -124,6 +150,17 @@ try {
     javax.swing.JOptionPane.showMessageDialog(this, "Error al guardar en la base de datos: " + ex.getMessage(), "Error", javax.swing.JOptionPane.ERROR_MESSAGE);
 }        // TODO add your handling code here:
     }//GEN-LAST:event_btnRegistrarActionPerformed
+
+    private void jButton1ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButton1ActionPerformed
+        try {
+    FrmLogin pantallaLogin = new FrmLogin();
+    pantallaLogin.setVisible(true);
+    
+    this.dispose();
+} catch (Exception ex) {
+    System.out.println("Error al regresar al login: " + ex.getMessage());
+}
+    }//GEN-LAST:event_jButton1ActionPerformed
 
     /**
      * @param args the command line arguments
@@ -157,6 +194,7 @@ public static boolean esCorreoValido(String correo) {
 }
     // Variables declaration - do not modify//GEN-BEGIN:variables
     private javax.swing.JButton btnRegistrar;
+    private javax.swing.JButton jButton1;
     private javax.swing.JPasswordField txtContrasena;
     private javax.swing.JTextField txtCorreo;
     private javax.swing.JTextField txtNombre;
