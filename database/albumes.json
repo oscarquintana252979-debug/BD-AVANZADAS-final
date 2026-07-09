@@ -1,0 +1,1 @@
+[{"_id":{"$oid":"6a4e8648cdce2d204a3138a5"},"nombre":"The Reason","fechaLanzamiento":{"$date":"2003-12-09T00:00:00Z"},"generoMusical":"Rock","imagenPortada":"img/albumes/the_reason.png","artistaId":{"$oid":"510200000000000000000000"},"canciones":[{"titulo":"Same Direction","duracion":199},{"titulo":"Out of Control","duracion":165},{"titulo":"The Reason","duracion":251}]}]
