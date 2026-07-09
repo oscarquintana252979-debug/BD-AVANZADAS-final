@@ -4,6 +4,8 @@
  */
 package com.equipo4.bibliotecamusical.presentacion;
 
+import javax.swing.ImageIcon;
+
 /**
  *
  * @author oscar
@@ -20,8 +22,33 @@ public class FrmPerfil extends javax.swing.JFrame {
     
     public FrmPerfil(String correo) {
         initComponents();
+        this.getContentPane().setBackground(new java.awt.Color(25, 25, 25));
+        try {
+    java.net.URL urlLogo = getClass().getResource("/imagenes/logo_musica.png"); 
+    if (urlLogo != null) {
+        ImageIcon iconOriginal = new ImageIcon(urlLogo);
+        java.awt.Image imgEscalada = iconOriginal.getImage().getScaledInstance(
+                btnLogoMenu.getWidth(), btnLogoMenu.getHeight(), java.awt.Image.SCALE_SMOOTH);
+        btnLogoMenu.setIcon(new ImageIcon(imgEscalada));
+    }
+} catch (Exception e) {
+    System.out.println("No se pudo cargar el logo: " + e.getMessage());
+}
+
+try {
+    java.net.URL urlPerfil = getClass().getResource("/imagenes/imagen-de-perfil2.png");
+    if (urlPerfil != null) {
+        ImageIcon iconOriginal = new ImageIcon(urlPerfil);
+        java.awt.Image imgEscalada = iconOriginal.getImage().getScaledInstance(
+                btnIconoPerfil.getWidth(), btnIconoPerfil.getHeight(), java.awt.Image.SCALE_SMOOTH);
+        btnIconoPerfil.setIcon(new ImageIcon(imgEscalada));
+    }
+} catch (Exception e) {
+    System.out.println("No se pudo cargar la foto de perfil: " + e.getMessage());
+}
         this.correoUsuarioActual = correo;
-        
+        btnLogoMenu.setCursor(new java.awt.Cursor(java.awt.Cursor.HAND_CURSOR));
+        btnIconoPerfil.setCursor(new java.awt.Cursor(java.awt.Cursor.HAND_CURSOR));
         cargarDatosPerfil();
     }
     
@@ -47,9 +74,11 @@ public class FrmPerfil extends javax.swing.JFrame {
     // <editor-fold defaultstate="collapsed" desc="Generated Code">//GEN-BEGIN:initComponents
     private void initComponents() {
 
+        jPanel1 = new javax.swing.JPanel();
+        jPanel2 = new javax.swing.JPanel();
         jLabel1 = new javax.swing.JLabel();
         lblNombreUsuario = new javax.swing.JLabel();
-        jButton1 = new javax.swing.JButton();
+        btnCerrarSesion = new javax.swing.JButton();
         txtNuevoNombre = new javax.swing.JTextField();
         btnActualizar = new javax.swing.JButton();
         txtGeneroRestringido = new javax.swing.JTextField();
@@ -58,22 +87,56 @@ public class FrmPerfil extends javax.swing.JFrame {
         txtIdElemento = new javax.swing.JTextField();
         txtGeneroFav = new javax.swing.JTextField();
         btnAgregarFav = new javax.swing.JButton();
+        btnLogoMenu = new javax.swing.JButton();
+        btnIconoPerfil = new javax.swing.JButton();
+
+        javax.swing.GroupLayout jPanel1Layout = new javax.swing.GroupLayout(jPanel1);
+        jPanel1.setLayout(jPanel1Layout);
+        jPanel1Layout.setHorizontalGroup(
+            jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+            .addGap(0, 100, Short.MAX_VALUE)
+        );
+        jPanel1Layout.setVerticalGroup(
+            jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+            .addGap(0, 100, Short.MAX_VALUE)
+        );
+
+        javax.swing.GroupLayout jPanel2Layout = new javax.swing.GroupLayout(jPanel2);
+        jPanel2.setLayout(jPanel2Layout);
+        jPanel2Layout.setHorizontalGroup(
+            jPanel2Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+            .addGap(0, 100, Short.MAX_VALUE)
+        );
+        jPanel2Layout.setVerticalGroup(
+            jPanel2Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+            .addGap(0, 100, Short.MAX_VALUE)
+        );
 
         setDefaultCloseOperation(javax.swing.WindowConstants.EXIT_ON_CLOSE);
+        setBackground(new java.awt.Color(25, 25, 25));
 
+        jLabel1.setForeground(new java.awt.Color(255, 255, 255));
         jLabel1.setText("Bienvenido");
 
+        lblNombreUsuario.setForeground(new java.awt.Color(255, 255, 255));
         lblNombreUsuario.setText("jLabel2");
 
-        jButton1.setText("Cerrar Sesión");
+        btnCerrarSesion.setBackground(new java.awt.Color(255, 0, 255));
+        btnCerrarSesion.setForeground(new java.awt.Color(255, 255, 255));
+        btnCerrarSesion.setText("Cerrar Sesión");
+        btnCerrarSesion.addActionListener(this::btnCerrarSesionActionPerformed);
 
         txtNuevoNombre.setText("Actualizar Nombre");
 
+        btnActualizar.setBackground(new java.awt.Color(255, 0, 255));
+        btnActualizar.setForeground(new java.awt.Color(255, 255, 255));
         btnActualizar.setText("Actualizar");
         btnActualizar.addActionListener(this::btnActualizarActionPerformed);
 
         txtGeneroRestringido.setText("Genero Restringido");
 
+        btnBloquearGenero.setBackground(new java.awt.Color(255, 0, 255));
+        btnBloquearGenero.setForeground(new java.awt.Color(255, 255, 255));
         btnBloquearGenero.setText("Bloquear Género");
         btnBloquearGenero.addActionListener(this::btnBloquearGeneroActionPerformed);
 
@@ -84,66 +147,90 @@ public class FrmPerfil extends javax.swing.JFrame {
 
         txtGeneroFav.setText("género");
 
+        btnAgregarFav.setBackground(new java.awt.Color(255, 0, 255));
+        btnAgregarFav.setForeground(new java.awt.Color(255, 255, 255));
         btnAgregarFav.setText("Agregar a Favoritos");
         btnAgregarFav.addActionListener(this::btnAgregarFavActionPerformed);
+
+        btnLogoMenu.setBorderPainted(false);
+        btnLogoMenu.setContentAreaFilled(false);
+        btnLogoMenu.addActionListener(this::btnLogoMenuActionPerformed);
+
+        btnIconoPerfil.setBorderPainted(false);
+        btnIconoPerfil.setContentAreaFilled(false);
+        btnIconoPerfil.addActionListener(this::btnIconoPerfilActionPerformed);
 
         javax.swing.GroupLayout layout = new javax.swing.GroupLayout(getContentPane());
         getContentPane().setLayout(layout);
         layout.setHorizontalGroup(
             layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(layout.createSequentialGroup()
-                .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.TRAILING, false)
-                    .addGroup(layout.createSequentialGroup()
-                        .addGap(42, 42, 42)
-                        .addComponent(btnActualizar)
-                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                        .addComponent(txtGeneroRestringido, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
-                    .addGroup(javax.swing.GroupLayout.Alignment.LEADING, layout.createSequentialGroup()
-                        .addGap(252, 252, 252)
-                        .addComponent(btnBloquearGenero)))
+                .addGap(42, 42, 42)
+                .addComponent(btnActualizar)
                 .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
             .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, layout.createSequentialGroup()
-                .addGap(152, 152, 152)
-                .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.TRAILING)
-                    .addComponent(jButton1)
+                .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                     .addGroup(layout.createSequentialGroup()
+                        .addGap(152, 152, 152)
+                        .addComponent(btnCerrarSesion)
+                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, 94, Short.MAX_VALUE))
+                    .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, layout.createSequentialGroup()
+                        .addGap(0, 0, Short.MAX_VALUE)
                         .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                            .addComponent(jLabel1)
                             .addGroup(layout.createSequentialGroup()
                                 .addGap(6, 6, 6)
-                                .addComponent(lblNombreUsuario))
-                            .addComponent(jLabel1))
-                        .addGap(23, 23, 23)))
-                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, 26, Short.MAX_VALUE)
-                .addComponent(cmbTipoFav, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addGap(47, 47, 47))
-            .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, layout.createSequentialGroup()
+                                .addComponent(lblNombreUsuario)))
+                        .addGap(64, 64, 64)))
+                .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING, false)
+                    .addGroup(layout.createSequentialGroup()
+                        .addGap(56, 56, 56)
+                        .addComponent(cmbTipoFav, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                        .addGap(47, 47, 47))
+                    .addGroup(layout.createSequentialGroup()
+                        .addGap(23, 23, 23)
+                        .addComponent(btnIconoPerfil, javax.swing.GroupLayout.PREFERRED_SIZE, 66, javax.swing.GroupLayout.PREFERRED_SIZE)
+                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                        .addComponent(btnLogoMenu, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))))
+            .addGroup(layout.createSequentialGroup()
                 .addGap(28, 28, 28)
                 .addComponent(txtNuevoNombre, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                .addComponent(txtGeneroFav, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addGap(57, 57, 57))
-            .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, layout.createSequentialGroup()
-                .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.TRAILING)
-                    .addComponent(btnAgregarFav)
-                    .addComponent(txtIdElemento, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
-                .addGap(21, 21, 21))
+                .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                    .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, layout.createSequentialGroup()
+                        .addComponent(txtGeneroFav, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                        .addGap(57, 57, 57))
+                    .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, layout.createSequentialGroup()
+                        .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.TRAILING)
+                            .addComponent(txtIdElemento, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                            .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                                .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.TRAILING, false)
+                                    .addGroup(layout.createSequentialGroup()
+                                        .addGap(2, 2, 2)
+                                        .addComponent(txtGeneroRestringido, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
+                                    .addComponent(btnBloquearGenero, javax.swing.GroupLayout.Alignment.LEADING))
+                                .addComponent(btnAgregarFav)))
+                        .addGap(21, 21, 21))))
         );
         layout.setVerticalGroup(
             layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(layout.createSequentialGroup()
-                .addContainerGap()
-                .addComponent(jLabel1)
                 .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                     .addGroup(layout.createSequentialGroup()
-                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                        .addComponent(lblNombreUsuario))
+                        .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                            .addComponent(btnIconoPerfil, javax.swing.GroupLayout.PREFERRED_SIZE, 55, javax.swing.GroupLayout.PREFERRED_SIZE)
+                            .addComponent(btnLogoMenu, javax.swing.GroupLayout.PREFERRED_SIZE, 55, javax.swing.GroupLayout.PREFERRED_SIZE))
+                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, 69, Short.MAX_VALUE)
+                        .addComponent(cmbTipoFav, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
                     .addGroup(layout.createSequentialGroup()
-                        .addGap(19, 19, 19)
-                        .addComponent(cmbTipoFav, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)))
+                        .addContainerGap()
+                        .addComponent(jLabel1)
+                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                        .addComponent(lblNombreUsuario)
+                        .addGap(0, 0, Short.MAX_VALUE)))
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
                 .addComponent(txtIdElemento, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, 11, Short.MAX_VALUE)
+                .addGap(22, 22, 22)
                 .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
                     .addComponent(txtNuevoNombre, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
                     .addComponent(txtGeneroFav, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
@@ -156,7 +243,7 @@ public class FrmPerfil extends javax.swing.JFrame {
                 .addGap(9, 9, 9)
                 .addComponent(btnBloquearGenero)
                 .addGap(16, 16, 16)
-                .addComponent(jButton1)
+                .addComponent(btnCerrarSesion)
                 .addGap(27, 27, 27))
         );
 
@@ -239,6 +326,44 @@ public class FrmPerfil extends javax.swing.JFrame {
         // TODO add your handling code here:
     }//GEN-LAST:event_cmbTipoFavActionPerformed
 
+    private void btnCerrarSesionActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnCerrarSesionActionPerformed
+        int opcion = javax.swing.JOptionPane.showConfirmDialog(this, 
+        "¿Estás seguro de que deseas cerrar sesión?", 
+        "Cerrar Sesión", 
+        javax.swing.JOptionPane.YES_NO_OPTION, 
+        javax.swing.JOptionPane.QUESTION_MESSAGE);
+
+if (opcion == javax.swing.JOptionPane.YES_OPTION) {
+    FrmLogin pantallaLogin = new FrmLogin();
+    pantallaLogin.setVisible(true);
+    
+    this.dispose();
+}
+    }//GEN-LAST:event_btnCerrarSesionActionPerformed
+
+    private void btnIconoPerfilActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnIconoPerfilActionPerformed
+        try {
+    FrmPerfil pantallaPerfil = new FrmPerfil(this.correoUsuarioActual);
+    pantallaPerfil.setVisible(true);
+    
+    this.dispose();
+    
+} catch (Exception ex) {
+    System.out.println("Error al navegar al perfil: " + ex.getMessage());
+}
+    }//GEN-LAST:event_btnIconoPerfilActionPerformed
+
+    private void btnLogoMenuActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnLogoMenuActionPerformed
+        try {
+    FrmMenuPrincipal menu = new FrmMenuPrincipal(this.correoUsuarioActual);
+    menu.setVisible(true);
+    
+    this.dispose();
+} catch (Exception ex) {
+    System.out.println("Error al abrir el menú: " + ex.getMessage());
+}
+    }//GEN-LAST:event_btnLogoMenuActionPerformed
+
     /**
      * @param args the command line arguments
      */
@@ -248,9 +373,13 @@ public class FrmPerfil extends javax.swing.JFrame {
     private javax.swing.JButton btnActualizar;
     private javax.swing.JButton btnAgregarFav;
     private javax.swing.JButton btnBloquearGenero;
+    private javax.swing.JButton btnCerrarSesion;
+    private javax.swing.JButton btnIconoPerfil;
+    private javax.swing.JButton btnLogoMenu;
     private javax.swing.JComboBox<String> cmbTipoFav;
-    private javax.swing.JButton jButton1;
     private javax.swing.JLabel jLabel1;
+    private javax.swing.JPanel jPanel1;
+    private javax.swing.JPanel jPanel2;
     private javax.swing.JLabel lblNombreUsuario;
     private javax.swing.JTextField txtGeneroFav;
     private javax.swing.JTextField txtGeneroRestringido;

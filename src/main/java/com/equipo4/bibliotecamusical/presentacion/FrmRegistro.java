@@ -17,6 +17,7 @@ public class FrmRegistro extends javax.swing.JFrame {
      */
     public FrmRegistro() {
         initComponents();
+        this.getContentPane().setBackground(new java.awt.Color(25, 25, 25));
     }
 
     /**
@@ -34,6 +35,7 @@ public class FrmRegistro extends javax.swing.JFrame {
         btnRegistrar = new javax.swing.JButton();
 
         setDefaultCloseOperation(javax.swing.WindowConstants.EXIT_ON_CLOSE);
+        setBackground(new java.awt.Color(25, 25, 25));
 
         txtNombre.setText("Nombre de usuario");
         txtNombre.addActionListener(this::txtNombreActionPerformed);
@@ -42,6 +44,8 @@ public class FrmRegistro extends javax.swing.JFrame {
 
         txtContrasena.setText("txtContrasena");
 
+        btnRegistrar.setBackground(new java.awt.Color(255, 0, 255));
+        btnRegistrar.setForeground(new java.awt.Color(255, 255, 255));
         btnRegistrar.setText("Registrarse");
         btnRegistrar.addActionListener(this::btnRegistrarActionPerformed);
 
@@ -54,15 +58,13 @@ public class FrmRegistro extends javax.swing.JFrame {
                     .addGroup(layout.createSequentialGroup()
                         .addGap(123, 123, 123)
                         .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.TRAILING)
-                            .addComponent(txtContrasena, javax.swing.GroupLayout.PREFERRED_SIZE, 94, javax.swing.GroupLayout.PREFERRED_SIZE)
+                            .addComponent(btnRegistrar, javax.swing.GroupLayout.PREFERRED_SIZE, 116, javax.swing.GroupLayout.PREFERRED_SIZE)
+                            .addComponent(txtCorreo, javax.swing.GroupLayout.PREFERRED_SIZE, 124, javax.swing.GroupLayout.PREFERRED_SIZE)
                             .addComponent(txtNombre, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)))
                     .addGroup(layout.createSequentialGroup()
-                        .addGap(137, 137, 137)
-                        .addComponent(btnRegistrar, javax.swing.GroupLayout.PREFERRED_SIZE, 116, javax.swing.GroupLayout.PREFERRED_SIZE))
-                    .addGroup(layout.createSequentialGroup()
-                        .addGap(102, 102, 102)
-                        .addComponent(txtCorreo, javax.swing.GroupLayout.PREFERRED_SIZE, 124, javax.swing.GroupLayout.PREFERRED_SIZE)))
-                .addContainerGap(147, Short.MAX_VALUE))
+                        .addGap(144, 144, 144)
+                        .addComponent(txtContrasena, javax.swing.GroupLayout.PREFERRED_SIZE, 94, javax.swing.GroupLayout.PREFERRED_SIZE)))
+                .addContainerGap(153, Short.MAX_VALUE))
         );
         layout.setVerticalGroup(
             layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
@@ -71,11 +73,11 @@ public class FrmRegistro extends javax.swing.JFrame {
                 .addComponent(txtNombre, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
                 .addComponent(txtCorreo, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addGap(24, 24, 24)
+                .addGap(18, 18, 18)
                 .addComponent(txtContrasena, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addGap(26, 26, 26)
+                .addGap(31, 31, 31)
                 .addComponent(btnRegistrar)
-                .addGap(35, 35, 35))
+                .addGap(36, 36, 36))
         );
 
         pack();
@@ -89,6 +91,13 @@ public class FrmRegistro extends javax.swing.JFrame {
 try {
     String nombre = txtNombre.getText().trim();
     String correo = txtCorreo.getText().trim();
+    if (!esCorreoValido(correo)) {
+    javax.swing.JOptionPane.showMessageDialog(this, 
+            "El formato del correo electrónico no es válido. Por favor ingresa uno real (ejemplo@dominio.com).", 
+            "Formato Incorrecto", 
+            javax.swing.JOptionPane.WARNING_MESSAGE);
+    return;
+}
     String contrasena = new String(txtContrasena.getPassword()); 
 
     if (nombre.isEmpty() || correo.isEmpty() || contrasena.isEmpty()) {
@@ -100,7 +109,7 @@ try {
     nuevoUsuario.setNombreUsuario(nombre);
     nuevoUsuario.setCorreoElectronico(correo);
     nuevoUsuario.setContrasena(contrasena);
-    nuevoUsuario.setImagenPerfil("img/perfiles/default.png"); // Imagen por defecto
+    nuevoUsuario.setImagenPerfil("img/perfiles/imagen-de-perfil2.png"); 
 
     com.equipo4.bibliotecamusical.persistencia.UsuarioDAO usuarioDAO = new com.equipo4.bibliotecamusical.persistencia.UsuarioDAO();
     usuarioDAO.registrarUsuario(nuevoUsuario);
@@ -140,7 +149,12 @@ try {
         /* Create and display the form */
         java.awt.EventQueue.invokeLater(() -> new FrmRegistro().setVisible(true));
     }
-
+public static boolean esCorreoValido(String correo) {
+    String regex = "^[A-Za-z0-9+_.-]+@(.+)$";
+    java.util.regex.Pattern pattern = java.util.regex.Pattern.compile(regex);
+    java.util.regex.Matcher matcher = pattern.matcher(correo);
+    return matcher.matches();
+}
     // Variables declaration - do not modify//GEN-BEGIN:variables
     private javax.swing.JButton btnRegistrar;
     private javax.swing.JPasswordField txtContrasena;

@@ -17,6 +17,7 @@ public class FrmLogin extends javax.swing.JFrame {
      */
     public FrmLogin() {
         initComponents();
+        this.getContentPane().setBackground(new java.awt.Color(25, 25, 25));
     }
 
     /**
@@ -33,12 +34,15 @@ public class FrmLogin extends javax.swing.JFrame {
         btnIngresar = new javax.swing.JButton();
 
         setDefaultCloseOperation(javax.swing.WindowConstants.EXIT_ON_CLOSE);
+        setBackground(new java.awt.Color(25, 25, 25));
 
         txtCorreoLogin.setText("Usuario");
         txtCorreoLogin.addActionListener(this::txtCorreoLoginActionPerformed);
 
         txtContrasenaLogin.setText("Contraseña");
 
+        btnIngresar.setBackground(new java.awt.Color(255, 0, 255));
+        btnIngresar.setForeground(new java.awt.Color(255, 255, 255));
         btnIngresar.setText("ENTRAR");
         btnIngresar.addActionListener(this::btnIngresarActionPerformed);
 
