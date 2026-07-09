@@ -136,6 +136,15 @@ try {
 
         txtGeneroRestringido.setColumns(15);
         txtGeneroRestringido.setText("Genero Restringido");
+        txtGeneroRestringido.addFocusListener(new java.awt.event.FocusAdapter() {
+            public void focusGained(java.awt.event.FocusEvent evt) {
+                txtGeneroRestringidoFocusGained(evt);
+            }
+            public void focusLost(java.awt.event.FocusEvent evt) {
+                txtGeneroRestringidoFocusLost(evt);
+            }
+        });
+        txtGeneroRestringido.addActionListener(this::txtGeneroRestringidoActionPerformed);
 
         btnBloquearGenero.setBackground(new java.awt.Color(255, 0, 255));
         btnBloquearGenero.setForeground(new java.awt.Color(255, 255, 255));
@@ -147,8 +156,26 @@ try {
 
         txtIdElemento.setColumns(15);
         txtIdElemento.setText("ID del artista o canción");
+        txtIdElemento.addFocusListener(new java.awt.event.FocusAdapter() {
+            public void focusGained(java.awt.event.FocusEvent evt) {
+                txtIdElementoFocusGained(evt);
+            }
+            public void focusLost(java.awt.event.FocusEvent evt) {
+                txtIdElementoFocusLost(evt);
+            }
+        });
 
+        txtGeneroFav.setColumns(15);
         txtGeneroFav.setText("género");
+        txtGeneroFav.addFocusListener(new java.awt.event.FocusAdapter() {
+            public void focusGained(java.awt.event.FocusEvent evt) {
+                txtGeneroFavFocusGained(evt);
+            }
+            public void focusLost(java.awt.event.FocusEvent evt) {
+                txtGeneroFavFocusLost(evt);
+            }
+        });
+        txtGeneroFav.addActionListener(this::txtGeneroFavActionPerformed);
 
         btnAgregarFav.setBackground(new java.awt.Color(255, 0, 255));
         btnAgregarFav.setForeground(new java.awt.Color(255, 255, 255));
@@ -201,9 +228,6 @@ try {
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
                 .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                     .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, layout.createSequentialGroup()
-                        .addComponent(txtGeneroFav, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-                        .addGap(57, 57, 57))
-                    .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, layout.createSequentialGroup()
                         .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.TRAILING)
                             .addComponent(txtIdElemento, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
                             .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
@@ -213,7 +237,10 @@ try {
                                         .addComponent(txtGeneroRestringido, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
                                     .addComponent(btnBloquearGenero, javax.swing.GroupLayout.Alignment.LEADING))
                                 .addComponent(btnAgregarFav)))
-                        .addGap(21, 21, 21))))
+                        .addGap(21, 21, 21))
+                    .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, layout.createSequentialGroup()
+                        .addComponent(txtGeneroFav, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                        .addGap(33, 33, 33))))
         );
         layout.setVerticalGroup(
             layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
@@ -298,31 +325,56 @@ try {
 
     private void btnAgregarFavActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnAgregarFavActionPerformed
         try {
-    String tipo = cmbTipoFav.getSelectedItem().toString();
-    String idElemento = txtIdElemento.getText().trim();
-    String genero = txtGeneroFav.getText().trim();
+        String idIngresado = txtIdElemento.getText().trim();
+        String generoIngresado = txtGeneroFav.getText().trim();
+        String tipoSeleccionado = cmbTipoFav.getSelectedItem().toString();
 
-    if (idElemento.isEmpty() || genero.isEmpty()) {
-        javax.swing.JOptionPane.showMessageDialog(this, "Por favor llena el ID y el género.", "Aviso", javax.swing.JOptionPane.WARNING_MESSAGE);
-        return;
+        if (idIngresado.isEmpty() || generoIngresado.isEmpty()) {
+            javax.swing.JOptionPane.showMessageDialog(this, "Por favor, llena todos los campos.");
+            return;
+        }
+
+        try (com.mongodb.client.MongoClient mongoClient = com.mongodb.client.MongoClients.create("mongodb://localhost:27017")) {
+            com.mongodb.client.MongoDatabase database = mongoClient.getDatabase("bibliotecaMusical4");
+            
+            com.mongodb.client.MongoCollection<org.bson.Document> coleccionArtistas = database.getCollection("artistas");
+            
+            org.bson.Document elementoEncontrado = coleccionArtistas.find(
+                    new org.bson.Document("_id", new org.bson.types.ObjectId(idIngresado))
+            ).first();
+
+            if (elementoEncontrado == null) {
+                javax.swing.JOptionPane.showMessageDialog(this, "No se encontró ningún elemento con ese ID en la base de datos.");
+                return;
+            }
+
+            String nombreEncontrado = elementoEncontrado.getString("nombre");
+
+            org.bson.Document nuevoFavorito = new org.bson.Document("_id", new org.bson.types.ObjectId())
+                    .append("tipo", tipoSeleccionado)
+                    .append("elementoId", new org.bson.types.ObjectId(idIngresado))
+                    .append("nombre", nombreEncontrado)
+                    .append("genero", generoIngresado)
+                    .append("fechaAgregacion", new java.util.Date());
+
+            com.mongodb.client.MongoCollection<org.bson.Document> coleccionUsuarios = database.getCollection("usuarios");
+            
+            coleccionUsuarios.updateOne(
+                    new org.bson.Document("correo", this.correoUsuarioActual),
+                    new org.bson.Document("$push", new org.bson.Document("favoritos", nuevoFavorito))
+            );
+
+            javax.swing.JOptionPane.showMessageDialog(this, "¡'" + nombreEncontrado + "' agregado a favoritos!");
+            
+            txtIdElemento.setText("ID del artista o canción");
+            txtGeneroFav.setText("género");
+        }
+
+    } catch (IllegalArgumentException e) {
+        javax.swing.JOptionPane.showMessageDialog(this, "El ID ingresado no tiene un formato válido de MongoDB.");
+    } catch (Exception ex) {
+        javax.swing.JOptionPane.showMessageDialog(this, "Error al agregar a favoritos: " + ex.getMessage());
     }
-
-    com.equipo4.bibliotecamusical.persistencia.UsuarioDAO usuarioDAO = new com.equipo4.bibliotecamusical.persistencia.UsuarioDAO();
-    usuarioDAO.agregarAFavoritos(correoUsuarioActual, tipo, idElemento, genero);
-
-    txtIdElemento.setText("");
-    txtGeneroFav.setText("");
-    
-    javax.swing.JOptionPane.showMessageDialog(this, "¡Agregado a favoritos exitosamente!", "Éxito", javax.swing.JOptionPane.INFORMATION_MESSAGE);
-
-} catch (IllegalStateException ex) {
-    javax.swing.JOptionPane.showMessageDialog(this, ex.getMessage(), "Género Restringido", javax.swing.JOptionPane.WARNING_MESSAGE);
-} catch (IllegalArgumentException ex) {
-    javax.swing.JOptionPane.showMessageDialog(this, "El ID ingresado no es válido.", "Error", javax.swing.JOptionPane.ERROR_MESSAGE);
-} catch (Exception ex) {
-    javax.swing.JOptionPane.showMessageDialog(this, "Error al guardar: " + ex.getMessage(), "Error", javax.swing.JOptionPane.ERROR_MESSAGE);
-}
-        
     }//GEN-LAST:event_btnAgregarFavActionPerformed
 
     private void cmbTipoFavActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_cmbTipoFavActionPerformed
@@ -366,6 +418,50 @@ if (opcion == javax.swing.JOptionPane.YES_OPTION) {
     System.out.println("Error al abrir el menú: " + ex.getMessage());
 }
     }//GEN-LAST:event_btnLogoMenuActionPerformed
+
+    private void txtIdElementoFocusGained(java.awt.event.FocusEvent evt) {//GEN-FIRST:event_txtIdElementoFocusGained
+        if (txtIdElemento.getText().equals("ID del artista o canción")) {
+    txtIdElemento.setText("");
+}
+    }//GEN-LAST:event_txtIdElementoFocusGained
+
+    private void txtIdElementoFocusLost(java.awt.event.FocusEvent evt) {//GEN-FIRST:event_txtIdElementoFocusLost
+        if (txtIdElemento.getText().isEmpty()) {
+    txtIdElemento.setText("ID del artista o canción");
+}
+    }//GEN-LAST:event_txtIdElementoFocusLost
+
+    private void txtGeneroFavActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_txtGeneroFavActionPerformed
+        // TODO add your handling code here:
+    }//GEN-LAST:event_txtGeneroFavActionPerformed
+
+    private void txtGeneroFavFocusGained(java.awt.event.FocusEvent evt) {//GEN-FIRST:event_txtGeneroFavFocusGained
+        if (txtGeneroFav.getText().equals("Género")) {
+        txtGeneroFav.setText(""); 
+    }
+
+    }//GEN-LAST:event_txtGeneroFavFocusGained
+
+    private void txtGeneroFavFocusLost(java.awt.event.FocusEvent evt) {//GEN-FIRST:event_txtGeneroFavFocusLost
+        if (txtGeneroFav.getText().isEmpty()) {
+        txtGeneroFav.setText("Género"); 
+        }
+    }//GEN-LAST:event_txtGeneroFavFocusLost
+
+    private void txtGeneroRestringidoActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_txtGeneroRestringidoActionPerformed
+        // TODO add your handling code here:
+    }//GEN-LAST:event_txtGeneroRestringidoActionPerformed
+
+    private void txtGeneroRestringidoFocusGained(java.awt.event.FocusEvent evt) {//GEN-FIRST:event_txtGeneroRestringidoFocusGained
+        if (txtGeneroRestringido.getText().equals("Genero Restringido")) {
+        txtGeneroRestringido.setText(""); 
+    }//GEN-LAST:event_txtGeneroRestringidoFocusGained
+    }
+    private void txtGeneroRestringidoFocusLost(java.awt.event.FocusEvent evt) {//GEN-FIRST:event_txtGeneroRestringidoFocusLost
+        if (txtGeneroRestringido.getText().isEmpty()) {
+        txtGeneroRestringido.setText("Genero Restringido"); 
+        }
+    }//GEN-LAST:event_txtGeneroRestringidoFocusLost
 
     /**
      * @param args the command line arguments

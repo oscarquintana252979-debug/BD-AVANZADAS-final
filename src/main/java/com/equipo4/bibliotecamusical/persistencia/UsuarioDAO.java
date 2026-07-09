@@ -46,7 +46,7 @@ public class UsuarioDAO {
     }
 
     public boolean iniciarSesion(String correo, String contrasenaPlana) {
-        Document usuarioEncontrado = coleccionUsuarios.find(Filters.eq("correo", correo)).first();
+        Document usuarioEncontrado = coleccionUsuarios.find(Filters.regex("correo", "^" + correo + "$", "i")).first();
 
         if (usuarioEncontrado == null) {
             return false;
@@ -58,7 +58,7 @@ public class UsuarioDAO {
     }
 
     public Document consultarPerfilPorCorreo(String correo) {
-        return coleccionUsuarios.find(Filters.eq("correo", correo)).first();
+        return coleccionUsuarios.find(Filters.regex("correo", "^" + correo + "$", "i")).first();
     }
 
 

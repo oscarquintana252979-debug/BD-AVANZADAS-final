@@ -19,6 +19,8 @@ public class FrmLogin extends javax.swing.JFrame {
      */
     public FrmLogin() {
         initComponents();
+        txtContrasenaLogin.setText("Contraseña");
+    txtContrasenaLogin.setEchoChar((char) 0);
         try {
     java.net.URL urlPerfil = getClass().getResource("/imagenes/imagen-de-perfil2.png");
     if (urlPerfil != null) {
@@ -54,10 +56,27 @@ public class FrmLogin extends javax.swing.JFrame {
 
         txtCorreoLogin.setColumns(15);
         txtCorreoLogin.setText("Usuario");
+        txtCorreoLogin.addFocusListener(new java.awt.event.FocusAdapter() {
+            public void focusGained(java.awt.event.FocusEvent evt) {
+                txtCorreoLoginFocusGained(evt);
+            }
+            public void focusLost(java.awt.event.FocusEvent evt) {
+                txtCorreoLoginFocusLost(evt);
+            }
+        });
         txtCorreoLogin.addActionListener(this::txtCorreoLoginActionPerformed);
 
         txtContrasenaLogin.setColumns(15);
         txtContrasenaLogin.setText("Contraseña");
+        txtContrasenaLogin.addFocusListener(new java.awt.event.FocusAdapter() {
+            public void focusGained(java.awt.event.FocusEvent evt) {
+                txtContrasenaLoginFocusGained(evt);
+            }
+            public void focusLost(java.awt.event.FocusEvent evt) {
+                txtContrasenaLoginFocusLost(evt);
+            }
+        });
+        txtContrasenaLogin.addActionListener(this::txtContrasenaLoginActionPerformed);
 
         btnIngresar.setBackground(new java.awt.Color(255, 0, 255));
         btnIngresar.setForeground(new java.awt.Color(255, 255, 255));
@@ -157,6 +176,36 @@ try {
     System.out.println("Error al abrir la pantalla de registro: " + ex.getMessage());
 }
     }//GEN-LAST:event_jButton1ActionPerformed
+
+    private void txtCorreoLoginFocusGained(java.awt.event.FocusEvent evt) {//GEN-FIRST:event_txtCorreoLoginFocusGained
+        if (txtCorreoLogin.getText().equals("Usuario")) {
+    txtCorreoLogin.setText("");
+}
+    }//GEN-LAST:event_txtCorreoLoginFocusGained
+
+    private void txtCorreoLoginFocusLost(java.awt.event.FocusEvent evt) {//GEN-FIRST:event_txtCorreoLoginFocusLost
+        if (txtCorreoLogin.getText().isEmpty()) {
+    txtCorreoLogin.setText("Usuario");
+}
+    }//GEN-LAST:event_txtCorreoLoginFocusLost
+
+    private void txtContrasenaLoginActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_txtContrasenaLoginActionPerformed
+        // TODO add your handling code here:
+    }//GEN-LAST:event_txtContrasenaLoginActionPerformed
+
+    private void txtContrasenaLoginFocusGained(java.awt.event.FocusEvent evt) {//GEN-FIRST:event_txtContrasenaLoginFocusGained
+        if (String.valueOf(txtContrasenaLogin.getPassword()).equals("Contraseña")) {
+    txtContrasenaLogin.setText("");
+    txtContrasenaLogin.setEchoChar('•');
+}
+    }//GEN-LAST:event_txtContrasenaLoginFocusGained
+
+    private void txtContrasenaLoginFocusLost(java.awt.event.FocusEvent evt) {//GEN-FIRST:event_txtContrasenaLoginFocusLost
+        if (String.valueOf(txtContrasenaLogin.getPassword()).isEmpty()) {
+    txtContrasenaLogin.setText("Contraseña");
+    txtContrasenaLogin.setEchoChar((char) 0);
+}
+    }//GEN-LAST:event_txtContrasenaLoginFocusLost
 
     /**
      * @param args the command line arguments

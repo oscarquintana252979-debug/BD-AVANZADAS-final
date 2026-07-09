@@ -17,6 +17,8 @@ public class FrmRegistro extends javax.swing.JFrame {
      */
     public FrmRegistro() {
         initComponents();
+        txtContrasena.setText("Contraseña");
+    txtContrasena.setEchoChar((char) 0);
         this.getContentPane().setBackground(new java.awt.Color(25, 25, 25));
     }
 
@@ -40,13 +42,37 @@ public class FrmRegistro extends javax.swing.JFrame {
 
         txtNombre.setColumns(15);
         txtNombre.setText("Nombre de usuario");
+        txtNombre.addFocusListener(new java.awt.event.FocusAdapter() {
+            public void focusGained(java.awt.event.FocusEvent evt) {
+                txtNombreFocusGained(evt);
+            }
+            public void focusLost(java.awt.event.FocusEvent evt) {
+                txtNombreFocusLost(evt);
+            }
+        });
         txtNombre.addActionListener(this::txtNombreActionPerformed);
 
         txtCorreo.setColumns(15);
         txtCorreo.setText("Correo electrónico");
+        txtCorreo.addFocusListener(new java.awt.event.FocusAdapter() {
+            public void focusGained(java.awt.event.FocusEvent evt) {
+                txtCorreoFocusGained(evt);
+            }
+            public void focusLost(java.awt.event.FocusEvent evt) {
+                txtCorreoFocusLost(evt);
+            }
+        });
 
         txtContrasena.setColumns(15);
-        txtContrasena.setText("txtContrasena");
+        txtContrasena.setText("Contraseña");
+        txtContrasena.addFocusListener(new java.awt.event.FocusAdapter() {
+            public void focusGained(java.awt.event.FocusEvent evt) {
+                txtContrasenaFocusGained(evt);
+            }
+            public void focusLost(java.awt.event.FocusEvent evt) {
+                txtContrasenaFocusLost(evt);
+            }
+        });
 
         btnRegistrar.setBackground(new java.awt.Color(255, 0, 255));
         btnRegistrar.setForeground(new java.awt.Color(255, 255, 255));
@@ -161,6 +187,44 @@ try {
     System.out.println("Error al regresar al login: " + ex.getMessage());
 }
     }//GEN-LAST:event_jButton1ActionPerformed
+
+    private void txtNombreFocusGained(java.awt.event.FocusEvent evt) {//GEN-FIRST:event_txtNombreFocusGained
+        if (txtNombre.getText().equals("Nombre de usuario")) {
+    txtNombre.setText("");
+}
+    }//GEN-LAST:event_txtNombreFocusGained
+
+    private void txtNombreFocusLost(java.awt.event.FocusEvent evt) {//GEN-FIRST:event_txtNombreFocusLost
+        if (txtNombre.getText().isEmpty()) {
+    txtNombre.setText("Nombre de usuario");
+}
+    }//GEN-LAST:event_txtNombreFocusLost
+
+    private void txtCorreoFocusGained(java.awt.event.FocusEvent evt) {//GEN-FIRST:event_txtCorreoFocusGained
+        if (txtCorreo.getText().equals("Correo electrónico")) {
+    txtCorreo.setText("");
+}
+    }//GEN-LAST:event_txtCorreoFocusGained
+
+    private void txtCorreoFocusLost(java.awt.event.FocusEvent evt) {//GEN-FIRST:event_txtCorreoFocusLost
+        if (txtCorreo.getText().isEmpty()) {
+    txtCorreo.setText("Correo electrónico");
+}
+    }//GEN-LAST:event_txtCorreoFocusLost
+
+    private void txtContrasenaFocusGained(java.awt.event.FocusEvent evt) {//GEN-FIRST:event_txtContrasenaFocusGained
+        if (String.valueOf(txtContrasena.getPassword()).equals("Contraseña")) {
+    txtContrasena.setText("");
+    txtContrasena.setEchoChar('•');
+}
+    }//GEN-LAST:event_txtContrasenaFocusGained
+
+    private void txtContrasenaFocusLost(java.awt.event.FocusEvent evt) {//GEN-FIRST:event_txtContrasenaFocusLost
+        if (String.valueOf(txtContrasena.getPassword()).isEmpty()) {
+    txtContrasena.setText("Contraseña");
+    txtContrasena.setEchoChar((char) 0); 
+}
+    }//GEN-LAST:event_txtContrasenaFocusLost
 
     /**
      * @param args the command line arguments
