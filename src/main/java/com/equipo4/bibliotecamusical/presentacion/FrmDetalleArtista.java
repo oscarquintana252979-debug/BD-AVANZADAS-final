@@ -5,11 +5,9 @@ import com.equipo4.bibliotecamusical.entidades.Artista;
 import com.equipo4.bibliotecamusical.entidades.Integrante;
 import com.equipo4.bibliotecamusical.entidades.Persona;
 import com.equipo4.bibliotecamusical.excepciones.ElementoNoEncontradoException;
-import com.equipo4.bibliotecamusical.excepciones.GeneroRestringidoException;
 import com.equipo4.bibliotecamusical.implementaciones.ConexionDAO;
 import com.equipo4.bibliotecamusical.persistencia.ArtistaDAO;
 import com.equipo4.bibliotecamusical.persistencia.PersonaDAO;
-import com.equipo4.bibliotecamusical.persistencia.UsuarioDAO;
 import java.awt.BorderLayout;
 import java.awt.Color;
 import java.awt.Component;
@@ -18,6 +16,7 @@ import java.awt.Font;
 import java.awt.GridLayout;
 import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
+import java.util.Set;
 import javax.swing.BorderFactory;
 import javax.swing.DefaultListModel;
 import javax.swing.ImageIcon;
@@ -42,6 +41,8 @@ public class FrmDetalleArtista extends javax.swing.JFrame {
     private DefaultTableModel modeloIntegrantes;
     private JCheckBox chkMostrarInactivos;
     private DefaultListModel<Album> modeloAlbumes = new DefaultListModel<>();
+    private Set<String> favoritoKeys;
+    private JButton btnFavArtista;
 
     public FrmDetalleArtista(String correo, String idArtista) {
         this.correoUsuarioActual = correo;
@@ -53,6 +54,7 @@ public class FrmDetalleArtista extends javax.swing.JFrame {
             this.dispose();
             return;
         }
+        this.favoritoKeys = FavoritosHelper.cargarClaves(correo);
         initComponents();
         this.getContentPane().setBackground(new Color(25, 25, 25));
     }
@@ -100,10 +102,14 @@ public class FrmDetalleArtista extends javax.swing.JFrame {
             }
         }
 
-        JButton btnFavArtista = new JButton("♥ Agregar a favoritos");
+        btnFavArtista = new JButton();
         btnFavArtista.setAlignmentX(Component.CENTER_ALIGNMENT);
-        btnFavArtista.addActionListener(e -> favoritearArtista());
+        btnFavArtista.addActionListener(e -> {
+            FavoritosHelper.alternar(this, favoritoKeys, correoUsuarioActual, "artista", artista.getId().toHexString(), artista.getGenero());
+            actualizarBotonFavorito();
+        });
         panelCabecera.add(btnFavArtista);
+        actualizarBotonFavorito();
 
         JPanel panelCentro = new JPanel(new BorderLayout());
         panelCentro.setBackground(new Color(25, 25, 25));
@@ -221,14 +227,10 @@ public class FrmDetalleArtista extends javax.swing.JFrame {
         return panel;
     }
 
-    private void favoritearArtista() {
-        try {
-            UsuarioDAO usuarioDAO = new UsuarioDAO(new ConexionDAO());
-            usuarioDAO.agregarAFavoritos(correoUsuarioActual, "artista", artista.getId().toHexString(), artista.getGenero());
-            JOptionPane.showMessageDialog(this, "'" + artista.getNombre() + "' agregado a favoritos.");
-        } catch (GeneroRestringidoException | ElementoNoEncontradoException ex) {
-            JOptionPane.showMessageDialog(this, ex.getMessage());
-        }
+    private void actualizarBotonFavorito() {
+        boolean esFav = FavoritosHelper.esFavorito(favoritoKeys, "artista", artista.getId().toHexString());
+        btnFavArtista.setText(esFav ? "♥ En favoritos" : "♡ Agregar a favoritos");
+        btnFavArtista.setForeground(esFav ? FavoritosHelper.MORADO : FavoritosHelper.GRIS);
     }
 
     private static class AlbumCellRenderer extends JPanel implements ListCellRenderer<Album> {

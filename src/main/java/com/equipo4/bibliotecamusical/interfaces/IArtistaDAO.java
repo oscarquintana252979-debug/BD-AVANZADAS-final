@@ -14,5 +14,6 @@ public interface IArtistaDAO {
     List<Artista> buscarArtistas(String texto, boolean porNombre, boolean porGenero);
     List<Album> buscarAlbumes(String texto, boolean porNombre, boolean porGenero, boolean porFecha);
     Album buscarAlbumPorId(String idAlbum) throws ElementoNoEncontradoException;
+    List<Cancion> buscarCanciones(String texto, boolean porNombre, boolean porGenero);
     Cancion buscarCancionPorId(String idCancion) throws ElementoNoEncontradoException;
 }

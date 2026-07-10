@@ -3,10 +3,8 @@ package com.equipo4.bibliotecamusical.presentacion;
 import com.equipo4.bibliotecamusical.entidades.Album;
 import com.equipo4.bibliotecamusical.entidades.Cancion;
 import com.equipo4.bibliotecamusical.excepciones.ElementoNoEncontradoException;
-import com.equipo4.bibliotecamusical.excepciones.GeneroRestringidoException;
 import com.equipo4.bibliotecamusical.implementaciones.ConexionDAO;
 import com.equipo4.bibliotecamusical.persistencia.ArtistaDAO;
-import com.equipo4.bibliotecamusical.persistencia.UsuarioDAO;
 import java.awt.BorderLayout;
 import java.awt.Color;
 import java.awt.Component;
@@ -15,6 +13,7 @@ import java.awt.Font;
 import java.awt.Rectangle;
 import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
+import java.util.Set;
 import javax.swing.BorderFactory;
 import javax.swing.DefaultListModel;
 import javax.swing.ImageIcon;
@@ -33,6 +32,8 @@ public class FrmDetalleAlbum extends javax.swing.JFrame {
     private final ArtistaDAO artistaDAO = new ArtistaDAO(new ConexionDAO());
     private Album album;
     private final DefaultListModel<Cancion> modeloCanciones = new DefaultListModel<>();
+    private Set<String> favoritoKeys;
+    private JButton btnFavAlbum;
 
     public FrmDetalleAlbum(String correo, String idAlbum) {
         this.correoUsuarioActual = correo;
@@ -44,6 +45,7 @@ public class FrmDetalleAlbum extends javax.swing.JFrame {
             this.dispose();
             return;
         }
+        this.favoritoKeys = FavoritosHelper.cargarClaves(correo);
         initComponents();
         this.getContentPane().setBackground(new Color(25, 25, 25));
     }
@@ -91,9 +93,13 @@ public class FrmDetalleAlbum extends javax.swing.JFrame {
         lblInfo.setForeground(new Color(180, 180, 180));
         lblInfo.setAlignmentX(Component.CENTER_ALIGNMENT);
 
-        JButton btnFavAlbum = new JButton("♥ Agregar a favoritos");
+        btnFavAlbum = new JButton();
         btnFavAlbum.setAlignmentX(Component.CENTER_ALIGNMENT);
-        btnFavAlbum.addActionListener(e -> favoritearAlbum());
+        btnFavAlbum.addActionListener(e -> {
+            FavoritosHelper.alternar(this, favoritoKeys, correoUsuarioActual, "album", album.getId().toHexString(), album.getGenero());
+            actualizarBotonFavorito();
+        });
+        actualizarBotonFavorito();
 
         panelCabecera.add(lblPortada);
         panelCabecera.add(lblNombre);
@@ -111,7 +117,7 @@ public class FrmDetalleAlbum extends javax.swing.JFrame {
         }
 
         JList<Cancion> lstCanciones = new JList<>(modeloCanciones);
-        lstCanciones.setCellRenderer(new CancionCellRenderer());
+        lstCanciones.setCellRenderer(new CancionCellRenderer(favoritoKeys));
         lstCanciones.setBackground(new Color(25, 25, 25));
         lstCanciones.addMouseListener(new MouseAdapter() {
             @Override
@@ -119,8 +125,15 @@ public class FrmDetalleAlbum extends javax.swing.JFrame {
                 int index = lstCanciones.locationToIndex(e.getPoint());
                 if (index < 0) return;
                 Rectangle bounds = lstCanciones.getCellBounds(index, index);
+                Cancion cancion = modeloCanciones.get(index);
+
                 if (e.getX() > bounds.width - 44) {
-                    favoritearCancion(modeloCanciones.get(index));
+                    FavoritosHelper.alternar(FrmDetalleAlbum.this, favoritoKeys, correoUsuarioActual,
+                            "cancion", cancion.getId().toHexString(), album.getGenero());
+                    lstCanciones.repaint();
+                } else if (e.getClickCount() == 2) {
+                    new FrmDetalleCancion(correoUsuarioActual, cancion.getId().toHexString()).setVisible(true);
+                    FrmDetalleAlbum.this.dispose();
                 }
             }
         });
@@ -140,37 +153,24 @@ public class FrmDetalleAlbum extends javax.swing.JFrame {
         getContentPane().add(panelCentro, BorderLayout.CENTER);
     }
 
-    private void favoritearAlbum() {
-        try {
-            UsuarioDAO usuarioDAO = new UsuarioDAO(new ConexionDAO());
-            usuarioDAO.agregarAFavoritos(correoUsuarioActual, "album", album.getId().toHexString(), album.getGenero());
-            JOptionPane.showMessageDialog(this, "'" + album.getNombre() + "' agregado a favoritos.");
-        } catch (GeneroRestringidoException | ElementoNoEncontradoException ex) {
-            JOptionPane.showMessageDialog(this, ex.getMessage());
-        }
-    }
-
-    private void favoritearCancion(Cancion cancion) {
-        try {
-            UsuarioDAO usuarioDAO = new UsuarioDAO(new ConexionDAO());
-            usuarioDAO.agregarAFavoritos(correoUsuarioActual, "cancion", cancion.getId().toHexString(), album.getGenero());
-            JOptionPane.showMessageDialog(this, "'" + cancion.getTitulo() + "' agregada a favoritos.");
-        } catch (GeneroRestringidoException | ElementoNoEncontradoException ex) {
-            JOptionPane.showMessageDialog(this, ex.getMessage());
-        }
+    private void actualizarBotonFavorito() {
+        boolean esFav = FavoritosHelper.esFavorito(favoritoKeys, "album", album.getId().toHexString());
+        btnFavAlbum.setText(esFav ? "♥ En favoritos" : "♡ Agregar a favoritos");
+        btnFavAlbum.setForeground(esFav ? FavoritosHelper.MORADO : FavoritosHelper.GRIS);
     }
 
     private static class CancionCellRenderer extends JPanel implements ListCellRenderer<Cancion> {
+        private final Set<String> favoritoKeys;
         private final JLabel lblTitulo = new JLabel();
         private final JLabel lblDuracion = new JLabel();
         private final JLabel lblCorazon = new JLabel("♥");
 
-        CancionCellRenderer() {
+        CancionCellRenderer(Set<String> favoritoKeys) {
+            this.favoritoKeys = favoritoKeys;
             setLayout(new BorderLayout(10, 0));
             setBorder(BorderFactory.createEmptyBorder(6, 12, 6, 8));
             lblTitulo.setForeground(Color.WHITE);
             lblDuracion.setForeground(new Color(180, 180, 180));
-            lblCorazon.setForeground(new Color(255, 0, 255));
             lblCorazon.setFont(lblCorazon.getFont().deriveFont(18f));
             lblCorazon.setHorizontalAlignment(SwingConstants.CENTER);
             lblCorazon.setPreferredSize(new Dimension(36, 30));
@@ -189,6 +189,10 @@ public class FrmDetalleAlbum extends javax.swing.JFrame {
                 boolean isSelected, boolean cellHasFocus) {
             lblTitulo.setText(cancion.getTitulo());
             lblDuracion.setText(cancion.getDuracion());
+
+            boolean esFav = FavoritosHelper.esFavorito(favoritoKeys, "cancion", cancion.getId().toHexString());
+            lblCorazon.setForeground(esFav ? FavoritosHelper.MORADO : FavoritosHelper.GRIS);
+
             setBackground(isSelected ? new Color(60, 60, 60) : new Color(25, 25, 25));
             setOpaque(true);
             return this;

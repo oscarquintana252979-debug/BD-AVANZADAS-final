@@ -4,6 +4,7 @@ import com.equipo4.bibliotecamusical.entidades.Favorito;
 import com.equipo4.bibliotecamusical.entidades.Usuario;
 import com.equipo4.bibliotecamusical.excepciones.ElementoNoEncontradoException;
 import com.equipo4.bibliotecamusical.excepciones.GeneroRestringidoException;
+import com.equipo4.bibliotecamusical.excepciones.PersistenciaException;
 import com.equipo4.bibliotecamusical.interfaces.IConexion;
 import com.equipo4.bibliotecamusical.interfaces.IUsuarioDAO;
 import com.equipo4.bibliotecamusical.negocio.UtilidadesSeguridad;
@@ -25,7 +26,12 @@ public class UsuarioDAO implements IUsuarioDAO {
     }
 
     @Override
-    public void registrarUsuario(Usuario usuario) {
+    public void registrarUsuario(Usuario usuario) throws PersistenciaException {
+        Usuario existente = coleccionUsuarios.find(Filters.regex("correo", "^" + java.util.regex.Pattern.quote(usuario.getCorreo()) + "$", "i")).first();
+        if (existente != null) {
+            throw new PersistenciaException("Ya existe una cuenta registrada con el correo " + usuario.getCorreo() + ".");
+        }
+
         usuario.setContrasena(UtilidadesSeguridad.encriptarContrasena(usuario.getContrasena()));
         usuario.setGenerosNoDeseados(new ArrayList<>());
         usuario.setFavoritos(new ArrayList<>());
@@ -106,5 +112,17 @@ public class UsuarioDAO implements IUsuarioDAO {
                 Updates.addToSet("favoritos", nuevoFavorito)
         );
         System.out.println("Favorito agregado correctamente.");
+    }
+
+    @Override
+    public void eliminarDeFavoritos(String correoUsuario, String tipo, String elementoId) {
+        coleccionUsuarios.updateOne(
+                Filters.eq("correo", correoUsuario),
+                Updates.pull("favoritos", Filters.and(
+                        Filters.eq("tipo", tipo),
+                        Filters.eq("elementoId", new org.bson.types.ObjectId(elementoId))
+                ))
+        );
+        System.out.println("Favorito eliminado correctamente.");
     }
 }

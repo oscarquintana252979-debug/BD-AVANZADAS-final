@@ -120,12 +120,34 @@ public class ArtistaDAO implements IArtistaDAO {
     }
 
     @Override
+    public List<Cancion> buscarCanciones(String texto, boolean porNombre, boolean porGenero) {
+        List<Bson> etapas = new ArrayList<>();
+        etapas.add(Aggregates.unwind("$albumes"));
+        etapas.add(Aggregates.unwind("$albumes.canciones"));
+
+        List<Bson> criterios = new ArrayList<>();
+        if (porNombre) criterios.add(Filters.regex("albumes.canciones.titulo", java.util.regex.Pattern.quote(texto), "i"));
+        if (porGenero) criterios.add(Filters.regex("albumes.genero", java.util.regex.Pattern.quote(texto), "i"));
+        if (!criterios.isEmpty()) {
+            etapas.add(Aggregates.match(Filters.and(criterios)));
+        }
+
+        etapas.add(cancionContextProjection());
+
+        List<Cancion> canciones = new ArrayList<>();
+        for (Document fila : coleccionArtistas.aggregate(etapas, Document.class)) {
+            canciones.add(documentToCancionConContexto(fila));
+        }
+        return canciones;
+    }
+
+    @Override
     public Cancion buscarCancionPorId(String idCancion) throws ElementoNoEncontradoException {
         List<Bson> etapas = List.of(
                 Aggregates.unwind("$albumes"),
                 Aggregates.unwind("$albumes.canciones"),
                 Aggregates.match(Filters.eq("albumes.canciones._id", new ObjectId(idCancion))),
-                Aggregates.project(Projections.computed("cancion", "$albumes.canciones"))
+                cancionContextProjection()
         );
 
         Document fila = coleccionArtistas.aggregate(etapas, Document.class).first();
@@ -133,8 +155,28 @@ public class ArtistaDAO implements IArtistaDAO {
             throw new ElementoNoEncontradoException("No existe una canción con id " + idCancion);
         }
 
-        Document cancionDoc = fila.get("cancion", Document.class);
-        return documentToCancion(cancionDoc);
+        return documentToCancionConContexto(fila);
+    }
+
+    private Bson cancionContextProjection() {
+        return Aggregates.project(Projections.fields(
+                Projections.computed("cancion", "$albumes.canciones"),
+                Projections.computed("albumId", "$albumes._id"),
+                Projections.computed("nombreAlbum", "$albumes.nombre"),
+                Projections.computed("genero", "$albumes.genero"),
+                Projections.computed("artistaId", "$_id"),
+                Projections.computed("nombreArtista", "$nombre")
+        ));
+    }
+
+    private Cancion documentToCancionConContexto(Document fila) {
+        Cancion cancion = documentToCancion(fila.get("cancion", Document.class));
+        cancion.setAlbumId(fila.getObjectId("albumId"));
+        cancion.setNombreAlbum(fila.getString("nombreAlbum"));
+        cancion.setGenero(fila.getString("genero"));
+        cancion.setArtistaId(fila.getObjectId("artistaId"));
+        cancion.setNombreArtista(fila.getString("nombreArtista"));
+        return cancion;
     }
 
     private Album documentToAlbum(Document d) {
