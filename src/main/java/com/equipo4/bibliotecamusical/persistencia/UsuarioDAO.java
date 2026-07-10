@@ -125,4 +125,12 @@ public class UsuarioDAO implements IUsuarioDAO {
         );
         System.out.println("Favorito eliminado correctamente.");
     }
+    @Override
+public void removerGeneroNoDeseado(String correo, String generoARemover) {
+    coleccionUsuarios.updateOne(
+            Filters.eq("correo", correo),
+            Updates.pull("generosNoDeseados", generoARemover)
+    );
+    System.out.println("Género removido de las restricciones correctamente.");
+}
 }

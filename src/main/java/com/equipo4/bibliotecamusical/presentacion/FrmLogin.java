@@ -22,7 +22,7 @@ public class FrmLogin extends javax.swing.JFrame {
         txtContrasenaLogin.setText("Contraseña");
     txtContrasenaLogin.setEchoChar((char) 0);
         try {
-    java.net.URL urlPerfil = getClass().getResource("/imagenes/imagen-de-perfil2.png");
+    java.net.URL urlPerfil = getClass().getResource("/imagenes/logo_musica.png");
     if (urlPerfil != null) {
         ImageIcon iconOriginal = new ImageIcon(urlPerfil);
         java.awt.Image imgEscalada = iconOriginal.getImage().getScaledInstance(
@@ -85,6 +85,7 @@ public class FrmLogin extends javax.swing.JFrame {
 
         btnIconoPerfil.setBorderPainted(false);
         btnIconoPerfil.setContentAreaFilled(false);
+        btnIconoPerfil.addActionListener(this::btnIconoPerfilActionPerformed);
 
         jButton1.setBackground(new java.awt.Color(255, 0, 255));
         jButton1.setForeground(new java.awt.Color(255, 255, 255));
@@ -206,6 +207,10 @@ try {
     txtContrasenaLogin.setEchoChar((char) 0);
 }
     }//GEN-LAST:event_txtContrasenaLoginFocusLost
+
+    private void btnIconoPerfilActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnIconoPerfilActionPerformed
+        // TODO add your handling code here:
+    }//GEN-LAST:event_btnIconoPerfilActionPerformed
 
     /**
      * @param args the command line arguments

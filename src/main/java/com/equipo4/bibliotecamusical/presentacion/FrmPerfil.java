@@ -19,7 +19,9 @@ public class FrmPerfil extends javax.swing.JFrame {
      */
     
     private String correoUsuarioActual;
-    
+    private String rutaNuevaImagen = ""; 
+private com.equipo4.bibliotecamusical.entidades.Usuario usuarioActual;
+
     public FrmPerfil(String correo) {
         initComponents();
         this.getContentPane().setBackground(new java.awt.Color(25, 25, 25));
@@ -53,17 +55,48 @@ try {
     }
     
     private void cargarDatosPerfil() {
-        try {
-            com.equipo4.bibliotecamusical.persistencia.UsuarioDAO usuarioDAO = new com.equipo4.bibliotecamusical.persistencia.UsuarioDAO(new com.equipo4.bibliotecamusical.implementaciones.ConexionDAO());
-            com.equipo4.bibliotecamusical.entidades.Usuario datosUsuario = usuarioDAO.consultarPerfilPorCorreo(correoUsuarioActual);
+    try {
+        com.equipo4.bibliotecamusical.persistencia.UsuarioDAO usuarioDAO = new com.equipo4.bibliotecamusical.persistencia.UsuarioDAO(new com.equipo4.bibliotecamusical.implementaciones.ConexionDAO());
+        this.usuarioActual = usuarioDAO.consultarPerfilPorCorreo(correoUsuarioActual);
 
-            if (datosUsuario != null) {
-                lblNombreUsuario.setText("¡Hola, " + datosUsuario.getNombreUsuario() + "!");
+        if (this.usuarioActual != null) {
+            lblNombreUsuario.setText("¡Hola, " + usuarioActual.getNombreUsuario() + "!");
+            
+            String rutaFoto = usuarioActual.getImagenPerfil();
+            
+            if (rutaFoto != null && !rutaFoto.isEmpty() && !rutaFoto.contains("default.png")) {
+                try {
+                    ImageIcon iconOriginal = new ImageIcon(rutaFoto);
+
+                    java.awt.Image imgChica = iconOriginal.getImage().getScaledInstance(
+                            55, 55, java.awt.Image.SCALE_SMOOTH);
+                    btnIconoPerfil.setIcon(new ImageIcon(imgChica));
+
+                    java.awt.Image imgGrande = iconOriginal.getImage().getScaledInstance(
+                            120, 120, java.awt.Image.SCALE_SMOOTH);
+                    btnFotoCentral.setIcon(new ImageIcon(imgGrande));
+
+                } catch (Exception e) {
+                    System.out.println("No se pudo cargar la foto personalizada: " + e.getMessage());
+                }
+            } else {
+                try {
+                    java.net.URL urlPerfil = getClass().getResource("/imagenes/imagen-de-perfil2.png");
+                    if (urlPerfil != null) {
+                        ImageIcon iconDefault = new ImageIcon(urlPerfil);
+                        
+                        btnIconoPerfil.setIcon(new ImageIcon(iconDefault.getImage().getScaledInstance(55, 55, java.awt.Image.SCALE_SMOOTH)));
+                        btnFotoCentral.setIcon(new ImageIcon(iconDefault.getImage().getScaledInstance(120, 120, java.awt.Image.SCALE_SMOOTH)));
+                    }
+                } catch (Exception ex) {
+                    System.out.println("Error al cargar la foto default: " + ex.getMessage());
+                }
             }
-        } catch (Exception ex) {
-            System.out.println("Error al cargar el perfil: " + ex.getMessage());
         }
+    } catch (Exception ex) {
+        System.out.println("Error al cargar el perfil: " + ex.getMessage());
     }
+}
     /**
      * This method is called from within the constructor to initialize the form.
      * WARNING: Do NOT modify this code. The content of this method is always
@@ -82,12 +115,11 @@ try {
         btnActualizar = new javax.swing.JButton();
         txtGeneroRestringido = new javax.swing.JTextField();
         btnBloquearGenero = new javax.swing.JButton();
-        cmbTipoFav = new javax.swing.JComboBox<>();
-        txtIdElemento = new javax.swing.JTextField();
-        txtGeneroFav = new javax.swing.JTextField();
-        btnAgregarFav = new javax.swing.JButton();
         btnLogoMenu = new javax.swing.JButton();
         btnIconoPerfil = new javax.swing.JButton();
+        btnFotoCentral = new javax.swing.JButton();
+        btnGestionarRestricciones = new javax.swing.JButton();
+        btnVerFavoritos = new javax.swing.JButton();
 
         javax.swing.GroupLayout jPanel1Layout = new javax.swing.GroupLayout(jPanel1);
         jPanel1.setLayout(jPanel1Layout);
@@ -150,37 +182,6 @@ try {
         btnBloquearGenero.setText("Bloquear Género");
         btnBloquearGenero.addActionListener(this::btnBloquearGeneroActionPerformed);
 
-        cmbTipoFav.setModel(new javax.swing.DefaultComboBoxModel<>(new String[] { "artista", "album", "cancion" }));
-        cmbTipoFav.addActionListener(this::cmbTipoFavActionPerformed);
-
-        txtIdElemento.setColumns(15);
-        txtIdElemento.setText("ID del artista o canción");
-        txtIdElemento.addFocusListener(new java.awt.event.FocusAdapter() {
-            public void focusGained(java.awt.event.FocusEvent evt) {
-                txtIdElementoFocusGained(evt);
-            }
-            public void focusLost(java.awt.event.FocusEvent evt) {
-                txtIdElementoFocusLost(evt);
-            }
-        });
-
-        txtGeneroFav.setColumns(15);
-        txtGeneroFav.setText("género");
-        txtGeneroFav.addFocusListener(new java.awt.event.FocusAdapter() {
-            public void focusGained(java.awt.event.FocusEvent evt) {
-                txtGeneroFavFocusGained(evt);
-            }
-            public void focusLost(java.awt.event.FocusEvent evt) {
-                txtGeneroFavFocusLost(evt);
-            }
-        });
-        txtGeneroFav.addActionListener(this::txtGeneroFavActionPerformed);
-
-        btnAgregarFav.setBackground(new java.awt.Color(255, 0, 255));
-        btnAgregarFav.setForeground(new java.awt.Color(255, 255, 255));
-        btnAgregarFav.setText("Agregar a Favoritos");
-        btnAgregarFav.addActionListener(this::btnAgregarFavActionPerformed);
-
         btnLogoMenu.setBorderPainted(false);
         btnLogoMenu.setContentAreaFilled(false);
         btnLogoMenu.addActionListener(this::btnLogoMenuActionPerformed);
@@ -188,6 +189,19 @@ try {
         btnIconoPerfil.setBorderPainted(false);
         btnIconoPerfil.setContentAreaFilled(false);
         btnIconoPerfil.addActionListener(this::btnIconoPerfilActionPerformed);
+
+        btnFotoCentral.setText("Seleccionar Imagen");
+        btnFotoCentral.setBorderPainted(false);
+        btnFotoCentral.setContentAreaFilled(false);
+        btnFotoCentral.addActionListener(this::btnFotoCentralActionPerformed);
+
+        btnGestionarRestricciones.setBackground(new java.awt.Color(255, 0, 255));
+        btnGestionarRestricciones.setForeground(new java.awt.Color(255, 255, 255));
+        btnGestionarRestricciones.setText("Gestionar Restricciones");
+        btnGestionarRestricciones.addActionListener(this::btnGestionarRestriccionesActionPerformed);
+
+        btnVerFavoritos.setText("Gestionar Mis Favoritos");
+        btnVerFavoritos.addActionListener(this::btnVerFavoritosActionPerformed);
 
         javax.swing.GroupLayout layout = new javax.swing.GroupLayout(getContentPane());
         getContentPane().setLayout(layout);
@@ -199,10 +213,6 @@ try {
                 .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
             .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, layout.createSequentialGroup()
                 .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                    .addGroup(layout.createSequentialGroup()
-                        .addGap(152, 152, 152)
-                        .addComponent(btnCerrarSesion)
-                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, 94, Short.MAX_VALUE))
                     .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, layout.createSequentialGroup()
                         .addGap(0, 0, Short.MAX_VALUE)
                         .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
@@ -210,70 +220,73 @@ try {
                             .addGroup(layout.createSequentialGroup()
                                 .addGap(6, 6, 6)
                                 .addComponent(lblNombreUsuario)))
-                        .addGap(64, 64, 64)))
-                .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING, false)
+                        .addGap(64, 64, 64))
                     .addGroup(layout.createSequentialGroup()
-                        .addGap(56, 56, 56)
-                        .addComponent(cmbTipoFav, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-                        .addGap(47, 47, 47))
-                    .addGroup(layout.createSequentialGroup()
-                        .addGap(23, 23, 23)
-                        .addComponent(btnIconoPerfil, javax.swing.GroupLayout.PREFERRED_SIZE, 66, javax.swing.GroupLayout.PREFERRED_SIZE)
-                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                        .addComponent(btnLogoMenu, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))))
+                        .addGap(152, 152, 152)
+                        .addComponent(btnCerrarSesion)
+                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)))
+                .addGap(23, 23, 23)
+                .addComponent(btnIconoPerfil, javax.swing.GroupLayout.PREFERRED_SIZE, 66, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                .addComponent(btnLogoMenu, javax.swing.GroupLayout.PREFERRED_SIZE, 106, javax.swing.GroupLayout.PREFERRED_SIZE))
             .addGroup(layout.createSequentialGroup()
-                .addGap(28, 28, 28)
-                .addComponent(txtNuevoNombre, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
                 .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                    .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, layout.createSequentialGroup()
-                        .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.TRAILING)
-                            .addComponent(txtIdElemento, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-                            .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                                .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.TRAILING, false)
-                                    .addGroup(layout.createSequentialGroup()
-                                        .addGap(2, 2, 2)
-                                        .addComponent(txtGeneroRestringido, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
-                                    .addComponent(btnBloquearGenero, javax.swing.GroupLayout.Alignment.LEADING))
-                                .addComponent(btnAgregarFav)))
+                    .addGroup(layout.createSequentialGroup()
+                        .addGap(28, 28, 28)
+                        .addComponent(txtNuevoNombre, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
+                    .addGroup(layout.createSequentialGroup()
+                        .addGap(44, 44, 44)
+                        .addComponent(btnFotoCentral, javax.swing.GroupLayout.PREFERRED_SIZE, 113, javax.swing.GroupLayout.PREFERRED_SIZE)))
+                .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                    .addGroup(layout.createSequentialGroup()
+                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                        .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.TRAILING, false)
+                            .addComponent(btnBloquearGenero, javax.swing.GroupLayout.Alignment.LEADING)
+                            .addGroup(layout.createSequentialGroup()
+                                .addGap(2, 2, 2)
+                                .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.TRAILING)
+                                    .addComponent(txtGeneroRestringido, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                                    .addComponent(btnGestionarRestricciones))))
                         .addGap(21, 21, 21))
-                    .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, layout.createSequentialGroup()
-                        .addComponent(txtGeneroFav, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-                        .addGap(33, 33, 33))))
+                    .addGroup(layout.createSequentialGroup()
+                        .addGap(139, 139, 139)
+                        .addComponent(btnVerFavoritos)
+                        .addGap(0, 25, Short.MAX_VALUE))))
         );
         layout.setVerticalGroup(
             layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(layout.createSequentialGroup()
-                .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.TRAILING)
                     .addGroup(layout.createSequentialGroup()
                         .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                             .addComponent(btnIconoPerfil, javax.swing.GroupLayout.PREFERRED_SIZE, 55, javax.swing.GroupLayout.PREFERRED_SIZE)
                             .addComponent(btnLogoMenu, javax.swing.GroupLayout.PREFERRED_SIZE, 55, javax.swing.GroupLayout.PREFERRED_SIZE))
-                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, 69, Short.MAX_VALUE)
-                        .addComponent(cmbTipoFav, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
+                        .addGap(83, 83, 83)
+                        .addComponent(btnVerFavoritos))
                     .addGroup(layout.createSequentialGroup()
                         .addContainerGap()
                         .addComponent(jLabel1)
                         .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                         .addComponent(lblNombreUsuario)
-                        .addGap(0, 0, Short.MAX_VALUE)))
-                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
-                .addComponent(txtIdElemento, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addGap(22, 22, 22)
-                .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
-                    .addComponent(txtNuevoNombre, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-                    .addComponent(txtGeneroFav, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
-                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                .addComponent(btnAgregarFav)
-                .addGap(20, 20, 20)
+                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                        .addComponent(btnFotoCentral, javax.swing.GroupLayout.PREFERRED_SIZE, 111, javax.swing.GroupLayout.PREFERRED_SIZE)))
+                .addGap(0, 0, Short.MAX_VALUE)
+                .addComponent(txtNuevoNombre, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addGap(49, 49, 49)
                 .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
                     .addComponent(btnActualizar)
                     .addComponent(txtGeneroRestringido, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
                 .addGap(9, 9, 9)
                 .addComponent(btnBloquearGenero)
-                .addGap(16, 16, 16)
-                .addComponent(btnCerrarSesion)
-                .addGap(27, 27, 27))
+                .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                    .addGroup(layout.createSequentialGroup()
+                        .addGap(16, 16, 16)
+                        .addComponent(btnCerrarSesion)
+                        .addGap(27, 27, 27))
+                    .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, layout.createSequentialGroup()
+                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                        .addComponent(btnGestionarRestricciones)
+                        .addGap(17, 17, 17))))
         );
 
         pack();
@@ -281,78 +294,64 @@ try {
 
     private void btnActualizarActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnActualizarActionPerformed
         try {
-    String nuevoNombre = txtNuevoNombre.getText().trim();
+        if (this.usuarioActual == null) {
+            javax.swing.JOptionPane.showMessageDialog(this, "Aún cargando datos, intenta de nuevo.", "Aviso", javax.swing.JOptionPane.WARNING_MESSAGE);
+            return;
+        }
 
-    if (nuevoNombre.isEmpty()) {
-        javax.swing.JOptionPane.showMessageDialog(this, "El nombre no puede estar vacío.", "Aviso", javax.swing.JOptionPane.WARNING_MESSAGE);
-        return;
+        String nombreIngresado = txtNuevoNombre.getText().trim();
+
+        String nombreFinal = (nombreIngresado.isEmpty() || nombreIngresado.equalsIgnoreCase("Actualizar Nombre"))
+                             ? usuarioActual.getNombreUsuario()
+                             : nombreIngresado;
+
+        String imagenFinal = rutaNuevaImagen.isEmpty()
+                             ? usuarioActual.getImagenPerfil()
+                             : rutaNuevaImagen;
+
+        com.equipo4.bibliotecamusical.persistencia.UsuarioDAO usuarioDAO = new com.equipo4.bibliotecamusical.persistencia.UsuarioDAO(new com.equipo4.bibliotecamusical.implementaciones.ConexionDAO());
+        usuarioDAO.actualizarPerfil(correoUsuarioActual, nombreFinal, imagenFinal);
+
+        javax.swing.JOptionPane.showMessageDialog(this, "¡Perfil actualizado con éxito en la base de datos!", "Éxito", javax.swing.JOptionPane.INFORMATION_MESSAGE);
+
+        new FrmPerfil(correoUsuarioActual).setVisible(true);
+        this.dispose();
+
+    } catch (Exception ex) {
+        javax.swing.JOptionPane.showMessageDialog(this, "Error al actualizar el perfil: " + ex.getMessage(), "Error", javax.swing.JOptionPane.ERROR_MESSAGE);
     }
-
-    com.equipo4.bibliotecamusical.persistencia.UsuarioDAO usuarioDAO = new com.equipo4.bibliotecamusical.persistencia.UsuarioDAO(new com.equipo4.bibliotecamusical.implementaciones.ConexionDAO());
-
-    usuarioDAO.actualizarPerfil(correoUsuarioActual, nuevoNombre, "img/perfiles/default.png");
-
-    lblNombreUsuario.setText("¡Hola, " + nuevoNombre + "!");
-    txtNuevoNombre.setText("");
-
-    javax.swing.JOptionPane.showMessageDialog(this, "Perfil actualizado con éxito.", "Éxito", javax.swing.JOptionPane.INFORMATION_MESSAGE);
-
-} catch (Exception ex) {
-    javax.swing.JOptionPane.showMessageDialog(this, "Error al actualizar: " + ex.getMessage(), "Error", javax.swing.JOptionPane.ERROR_MESSAGE);
-}
     }//GEN-LAST:event_btnActualizarActionPerformed
 
     private void btnBloquearGeneroActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnBloquearGeneroActionPerformed
         try {
-    String genero = txtGeneroRestringido.getText().trim();
+        String genero = txtGeneroRestringido.getText().trim();
 
-    if (genero.isEmpty()) {
-        javax.swing.JOptionPane.showMessageDialog(this, "Escribe un género musical para bloquear.", "Aviso", javax.swing.JOptionPane.WARNING_MESSAGE);
-        return;
-    }
-
-    com.equipo4.bibliotecamusical.persistencia.UsuarioDAO usuarioDAO = new com.equipo4.bibliotecamusical.persistencia.UsuarioDAO(new com.equipo4.bibliotecamusical.implementaciones.ConexionDAO());
-    usuarioDAO.agregarGeneroNoDeseado(correoUsuarioActual, genero);
-
-    txtGeneroRestringido.setText("");
-    javax.swing.JOptionPane.showMessageDialog(this, "El género '" + genero + "' ha sido bloqueado.\nSe han eliminado de tus favoritos los elementos relacionados.", "Operación Exitosa", javax.swing.JOptionPane.INFORMATION_MESSAGE);
-
-} catch (Exception ex) {
-    javax.swing.JOptionPane.showMessageDialog(this, "Error al bloquear el género: " + ex.getMessage(), "Error", javax.swing.JOptionPane.ERROR_MESSAGE);
-}
-    }//GEN-LAST:event_btnBloquearGeneroActionPerformed
-
-    private void btnAgregarFavActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnAgregarFavActionPerformed
-        try {
-        String idIngresado = txtIdElemento.getText().trim();
-        String generoIngresado = txtGeneroFav.getText().trim();
-        String tipoSeleccionado = cmbTipoFav.getSelectedItem().toString();
-
-        if (idIngresado.isEmpty() || generoIngresado.isEmpty()) {
-            javax.swing.JOptionPane.showMessageDialog(this, "Por favor, llena todos los campos.");
+        if (genero.isEmpty() || genero.equalsIgnoreCase("Genero Restringido")) {
+            javax.swing.JOptionPane.showMessageDialog(this, "Escribe un género musical para bloquear.", "Aviso", javax.swing.JOptionPane.WARNING_MESSAGE);
             return;
         }
 
+
+        int confirmacion = javax.swing.JOptionPane.showConfirmDialog(this,
+                "Tienes elementos de " + genero + " en tus favoritos. Si bloqueas este género, se eliminarán de tu lista.\n\n¿Deseas continuar?",
+                "Advertencia",
+                javax.swing.JOptionPane.YES_NO_OPTION,
+                javax.swing.JOptionPane.WARNING_MESSAGE);
+
+        if (confirmacion != javax.swing.JOptionPane.YES_OPTION) {
+            return; 
+        }
+
         com.equipo4.bibliotecamusical.persistencia.UsuarioDAO usuarioDAO = new com.equipo4.bibliotecamusical.persistencia.UsuarioDAO(new com.equipo4.bibliotecamusical.implementaciones.ConexionDAO());
-        usuarioDAO.agregarAFavoritos(this.correoUsuarioActual, tipoSeleccionado, idIngresado, generoIngresado);
+        usuarioDAO.agregarGeneroNoDeseado(correoUsuarioActual, genero);
 
-        javax.swing.JOptionPane.showMessageDialog(this, "¡Agregado a favoritos!");
+        txtGeneroRestringido.setText("Genero Restringido");
+        javax.swing.JOptionPane.showMessageDialog(this, "El género '" + genero + "' ha sido bloqueado exitosamente.", "Operación Exitosa", javax.swing.JOptionPane.INFORMATION_MESSAGE);
 
-        txtIdElemento.setText("ID del artista o canción");
-        txtGeneroFav.setText("género");
-
-    } catch (IllegalArgumentException e) {
-        javax.swing.JOptionPane.showMessageDialog(this, "El ID ingresado no tiene un formato válido de MongoDB.");
-    } catch (com.equipo4.bibliotecamusical.excepciones.GeneroRestringidoException | com.equipo4.bibliotecamusical.excepciones.ElementoNoEncontradoException ex) {
-        javax.swing.JOptionPane.showMessageDialog(this, ex.getMessage());
     } catch (Exception ex) {
-        javax.swing.JOptionPane.showMessageDialog(this, "Error al agregar a favoritos: " + ex.getMessage());
+        javax.swing.JOptionPane.showMessageDialog(this, "Error al bloquear el género: " + ex.getMessage(), "Error", javax.swing.JOptionPane.ERROR_MESSAGE);
     }
-    }//GEN-LAST:event_btnAgregarFavActionPerformed
-
-    private void cmbTipoFavActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_cmbTipoFavActionPerformed
-        // TODO add your handling code here:
-    }//GEN-LAST:event_cmbTipoFavActionPerformed
+    }//GEN-LAST:event_btnBloquearGeneroActionPerformed
 
     private void btnCerrarSesionActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnCerrarSesionActionPerformed
         int opcion = javax.swing.JOptionPane.showConfirmDialog(this, 
@@ -375,7 +374,10 @@ if (opcion == javax.swing.JOptionPane.YES_OPTION) {
     pantallaPerfil.setVisible(true);
     
     this.dispose();
-    
+    btnIconoPerfil.addActionListener(e -> {
+            new FrmMenuPrincipal(correoUsuarioActual).setVisible(true);
+            this.dispose();
+        });
 } catch (Exception ex) {
     System.out.println("Error al navegar al perfil: " + ex.getMessage());
 }
@@ -392,35 +394,6 @@ if (opcion == javax.swing.JOptionPane.YES_OPTION) {
 }
     }//GEN-LAST:event_btnLogoMenuActionPerformed
 
-    private void txtIdElementoFocusGained(java.awt.event.FocusEvent evt) {//GEN-FIRST:event_txtIdElementoFocusGained
-        if (txtIdElemento.getText().equals("ID del artista o canción")) {
-    txtIdElemento.setText("");
-}
-    }//GEN-LAST:event_txtIdElementoFocusGained
-
-    private void txtIdElementoFocusLost(java.awt.event.FocusEvent evt) {//GEN-FIRST:event_txtIdElementoFocusLost
-        if (txtIdElemento.getText().isEmpty()) {
-    txtIdElemento.setText("ID del artista o canción");
-}
-    }//GEN-LAST:event_txtIdElementoFocusLost
-
-    private void txtGeneroFavActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_txtGeneroFavActionPerformed
-        // TODO add your handling code here:
-    }//GEN-LAST:event_txtGeneroFavActionPerformed
-
-    private void txtGeneroFavFocusGained(java.awt.event.FocusEvent evt) {//GEN-FIRST:event_txtGeneroFavFocusGained
-        if (txtGeneroFav.getText().equals("Género")) {
-        txtGeneroFav.setText(""); 
-    }
-
-    }//GEN-LAST:event_txtGeneroFavFocusGained
-
-    private void txtGeneroFavFocusLost(java.awt.event.FocusEvent evt) {//GEN-FIRST:event_txtGeneroFavFocusLost
-        if (txtGeneroFav.getText().isEmpty()) {
-        txtGeneroFav.setText("Género"); 
-        }
-    }//GEN-LAST:event_txtGeneroFavFocusLost
-
     private void txtGeneroRestringidoActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_txtGeneroRestringidoActionPerformed
         // TODO add your handling code here:
     }//GEN-LAST:event_txtGeneroRestringidoActionPerformed
@@ -436,6 +409,197 @@ if (opcion == javax.swing.JOptionPane.YES_OPTION) {
         }
     }//GEN-LAST:event_txtGeneroRestringidoFocusLost
 
+    private void btnFotoCentralActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnFotoCentralActionPerformed
+        javax.swing.JFileChooser selector = new javax.swing.JFileChooser();
+    javax.swing.filechooser.FileNameExtensionFilter filtro = new javax.swing.filechooser.FileNameExtensionFilter("Imágenes (*.png, *.jpg)", "png", "jpg", "jpeg");
+    selector.setFileFilter(filtro);
+
+    int resultado = selector.showOpenDialog(this);
+    if (resultado == javax.swing.JFileChooser.APPROVE_OPTION) {
+        rutaNuevaImagen = selector.getSelectedFile().getAbsolutePath();
+        
+        ImageIcon iconOriginal = new ImageIcon(rutaNuevaImagen);
+        
+        java.awt.Image imgCentral = iconOriginal.getImage().getScaledInstance(
+                btnFotoCentral.getWidth(), btnFotoCentral.getHeight(), java.awt.Image.SCALE_SMOOTH);
+        btnFotoCentral.setIcon(new ImageIcon(imgCentral));
+        
+        java.awt.Image imgEsquina = iconOriginal.getImage().getScaledInstance(
+                btnIconoPerfil.getWidth(), btnIconoPerfil.getHeight(), java.awt.Image.SCALE_SMOOTH);
+        btnIconoPerfil.setIcon(new ImageIcon(imgEsquina));
+    }
+    }//GEN-LAST:event_btnFotoCentralActionPerformed
+
+    private void btnGestionarRestriccionesActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnGestionarRestriccionesActionPerformed
+        String[] generosDisponibles = {"Reggaeton", "Rock", "Pop", "Banda", "K-Pop", "Hip-Hop", "Jazz", "Electrónica"};
+
+    javax.swing.JPanel panelManager = new javax.swing.JPanel(new java.awt.BorderLayout(10, 15));
+    panelManager.setBackground(new java.awt.Color(25, 25, 25));
+    panelManager.setBorder(javax.swing.BorderFactory.createEmptyBorder(10, 10, 10, 10));
+
+    javax.swing.JPanel panelSuperior = new javax.swing.JPanel(new java.awt.FlowLayout(java.awt.FlowLayout.LEFT));
+    panelSuperior.setOpaque(false);
+    javax.swing.JLabel lblDisp = new javax.swing.JLabel("Géneros en el sistema:");
+    lblDisp.setForeground(java.awt.Color.WHITE);
+    javax.swing.JComboBox<String> cmbDisponibles = new javax.swing.JComboBox<>(generosDisponibles);
+    panelSuperior.add(lblDisp);
+    panelSuperior.add(cmbDisponibles);
+
+    javax.swing.JPanel panelCentro = new javax.swing.JPanel(new java.awt.BorderLayout(5, 8));
+    panelCentro.setOpaque(false);
+    javax.swing.JLabel lblRest = new javax.swing.JLabel("Tus restricciones actuales (Selecciona una para retirar):");
+    lblRest.setForeground(java.awt.Color.WHITE);
+    
+    javax.swing.DefaultListModel<String> modeloLista = new javax.swing.DefaultListModel<>();
+    if (this.usuarioActual != null && this.usuarioActual.getGenerosNoDeseados() != null) {
+        for (String g : this.usuarioActual.getGenerosNoDeseados()) {
+            modeloLista.addElement(g);
+        }
+    }
+    
+    javax.swing.JList<String> listaRestricciones = new javax.swing.JList<>(modeloLista);
+    listaRestricciones.setBackground(new java.awt.Color(40, 40, 40));
+    listaRestricciones.setForeground(java.awt.Color.WHITE);
+    listaRestricciones.setSelectionBackground(new java.awt.Color(255, 0, 255));
+    javax.swing.JScrollPane scrollLista = new javax.swing.JScrollPane(listaRestricciones);
+    scrollLista.setPreferredSize(new java.awt.Dimension(300, 120));
+
+    panelCentro.add(lblRest, java.awt.BorderLayout.NORTH);
+    panelCentro.add(scrollLista, java.awt.BorderLayout.CENTER);
+
+    javax.swing.JButton btnQuitarRestriccion = new javax.swing.JButton("Retirar Restricción");
+    btnQuitarRestriccion.setBackground(new java.awt.Color(255, 0, 255));
+    btnQuitarRestriccion.setForeground(java.awt.Color.WHITE);
+    
+    btnQuitarRestriccion.addActionListener(e -> {
+        String seleccionado = listaRestricciones.getSelectedValue();
+        if (seleccionado == null) {
+            javax.swing.JOptionPane.showMessageDialog(panelManager, "Por favor, selecciona un género de tu lista de restricciones para retirarlo.", "Aviso", javax.swing.JOptionPane.WARNING_MESSAGE);
+            return;
+        }
+        
+        int opc = javax.swing.JOptionPane.showConfirmDialog(panelManager, 
+                "¿Estás seguro de que deseas retirar '" + seleccionado + "' de tus restricciones?\nVolverás a ver este género en el catálogo.", 
+                "Confirmar Operación", javax.swing.JOptionPane.YES_NO_OPTION, javax.swing.JOptionPane.QUESTION_MESSAGE);
+        
+        if (opc == javax.swing.JOptionPane.YES_OPTION) {
+            try {
+                com.equipo4.bibliotecamusical.persistencia.UsuarioDAO usuarioDAO = new com.equipo4.bibliotecamusical.persistencia.UsuarioDAO(new com.equipo4.bibliotecamusical.implementaciones.ConexionDAO());
+                usuarioDAO.removerGeneroNoDeseado(correoUsuarioActual, seleccionado);
+                
+                modeloLista.removeElement(seleccionado);
+                if (this.usuarioActual.getGenerosNoDeseados() != null) {
+                    this.usuarioActual.getGenerosNoDeseados().remove(seleccionado);
+                }
+                
+                javax.swing.JOptionPane.showMessageDialog(panelManager, "El género '" + seleccionado + "' ha sido habilitado nuevamente.", "Éxito", javax.swing.JOptionPane.INFORMATION_MESSAGE);
+            } catch (Exception ex) {
+                javax.swing.JOptionPane.showMessageDialog(panelManager, "Error al retirar restricción: " + ex.getMessage(), "Error", javax.swing.JOptionPane.ERROR_MESSAGE);
+            }
+        }
+    });
+    
+    panelCentro.add(btnQuitarRestriccion, java.awt.BorderLayout.SOUTH);
+
+    panelManager.add(panelSuperior, java.awt.BorderLayout.NORTH);
+    panelManager.add(panelCentro, java.awt.BorderLayout.CENTER);
+
+    javax.swing.JOptionPane.showOptionDialog(this, panelManager, "Panel de Gestión de Géneros", 
+            javax.swing.JOptionPane.OK_CANCEL_OPTION, javax.swing.JOptionPane.PLAIN_MESSAGE, null, new Object[]{"Cerrar"}, "Cerrar");
+
+    }//GEN-LAST:event_btnGestionarRestriccionesActionPerformed
+
+    private void btnVerFavoritosActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnVerFavoritosActionPerformed
+        javax.swing.JDialog dialogoFavs = new javax.swing.JDialog(this, "Gestión de Favoritos", true);
+    dialogoFavs.setSize(500, 600);
+    dialogoFavs.setLocationRelativeTo(this);
+    dialogoFavs.getContentPane().setBackground(new java.awt.Color(25, 25, 25));
+    dialogoFavs.setLayout(new java.awt.BorderLayout(10, 10));
+
+    javax.swing.JPanel panelFiltros = new javax.swing.JPanel(new java.awt.FlowLayout(java.awt.FlowLayout.LEFT));
+    panelFiltros.setOpaque(false);
+    javax.swing.JCheckBox chkArtista = new javax.swing.JCheckBox("Artista", true);
+    chkArtista.setForeground(java.awt.Color.WHITE);
+    javax.swing.JCheckBox chkAlbum = new javax.swing.JCheckBox("Álbum", true);
+    chkAlbum.setForeground(java.awt.Color.WHITE);
+    javax.swing.JCheckBox chkCancion = new javax.swing.JCheckBox("Canción", true);
+    chkCancion.setForeground(java.awt.Color.WHITE);
+    javax.swing.JTextField txtFiltroGenero = new javax.swing.JTextField(8);
+    txtFiltroGenero.setText("Género...");
+    javax.swing.JButton btnAplicar = new javax.swing.JButton("Filtrar");
+
+    panelFiltros.add(chkArtista); panelFiltros.add(chkAlbum); panelFiltros.add(chkCancion);
+    panelFiltros.add(txtFiltroGenero); panelFiltros.add(btnAplicar);
+
+    javax.swing.DefaultListModel<com.equipo4.bibliotecamusical.entidades.Favorito> modeloLista = new javax.swing.DefaultListModel<>();
+    javax.swing.JList<com.equipo4.bibliotecamusical.entidades.Favorito> lstFavoritos = new javax.swing.JList<>(modeloLista);
+    lstFavoritos.setBackground(new java.awt.Color(40, 40, 40));
+    lstFavoritos.setForeground(java.awt.Color.WHITE);
+
+ lstFavoritos.setCellRenderer(new javax.swing.DefaultListCellRenderer() {
+        @Override
+        public java.awt.Component getListCellRendererComponent(javax.swing.JList<?> list, Object value, int index, boolean isSelected, boolean cellHasFocus) {
+            super.getListCellRendererComponent(list, value, index, isSelected, cellHasFocus);
+            setForeground(java.awt.Color.WHITE);
+            com.equipo4.bibliotecamusical.entidades.Favorito f = (com.equipo4.bibliotecamusical.entidades.Favorito) value;
+            String nombre = "Cargando...";
+            
+            try {
+                com.equipo4.bibliotecamusical.persistencia.ArtistaDAO dao = new com.equipo4.bibliotecamusical.persistencia.ArtistaDAO(new com.equipo4.bibliotecamusical.implementaciones.ConexionDAO());
+                
+                if (f.getTipo().equalsIgnoreCase("artista")) {
+                    nombre = dao.buscarPorId(f.getElementoId().toHexString()).getNombre();
+                } else if (f.getTipo().equalsIgnoreCase("album")) {
+                    nombre = dao.buscarAlbumPorId(f.getElementoId().toHexString()).getNombre();
+                } else if (f.getTipo().equalsIgnoreCase("cancion")) {
+                    nombre = dao.buscarCancionPorId(f.getElementoId().toHexString()).getTitulo();
+                }
+            } catch (Exception ex) {
+                nombre = "Error al cargar";
+            }
+            setText(f.getTipo().toUpperCase() + ": " + nombre);
+            return this;
+        }
+    });
+    java.lang.Runnable cargar = () -> {
+        modeloLista.clear();
+        String filtroGen = txtFiltroGenero.getText().equalsIgnoreCase("Género...") ? "" : txtFiltroGenero.getText().toLowerCase();
+        for (com.equipo4.bibliotecamusical.entidades.Favorito f : usuarioActual.getFavoritos()) {
+            boolean tipoValido = (f.getTipo().equals("artista") && chkArtista.isSelected()) ||
+                                 (f.getTipo().equals("album") && chkAlbum.isSelected()) ||
+                                 (f.getTipo().equals("cancion") && chkCancion.isSelected());
+            boolean generoValido = filtroGen.isEmpty() || f.getGenero().toLowerCase().contains(filtroGen);
+            
+            if (tipoValido && generoValido) modeloLista.addElement(f);
+        }
+    };
+
+    btnAplicar.addActionListener(e -> cargar.run());
+    cargar.run();
+
+    lstFavoritos.addMouseListener(new java.awt.event.MouseAdapter() {
+        public void mouseClicked(java.awt.event.MouseEvent e) {
+            if (e.getClickCount() == 2) {
+                com.equipo4.bibliotecamusical.entidades.Favorito f = lstFavoritos.getSelectedValue();
+                if (f != null) {
+                    int opc = javax.swing.JOptionPane.showConfirmDialog(dialogoFavs, "¿Eliminar de favoritos?");
+                    if (opc == 0) {
+                        new com.equipo4.bibliotecamusical.persistencia.UsuarioDAO(new com.equipo4.bibliotecamusical.implementaciones.ConexionDAO())
+                                .eliminarDeFavoritos(correoUsuarioActual, f.getTipo(), f.getElementoId().toHexString());
+                        cargarDatosPerfil();
+                        cargar.run();
+                    }
+                }
+            }
+        }
+    });
+
+    dialogoFavs.add(panelFiltros, java.awt.BorderLayout.NORTH);
+    dialogoFavs.add(new javax.swing.JScrollPane(lstFavoritos), java.awt.BorderLayout.CENTER);
+    dialogoFavs.setVisible(true);
+
+    }//GEN-LAST:event_btnVerFavoritosActionPerformed
+
     /**
      * @param args the command line arguments
      */
@@ -443,19 +607,18 @@ if (opcion == javax.swing.JOptionPane.YES_OPTION) {
 
     // Variables declaration - do not modify//GEN-BEGIN:variables
     private javax.swing.JButton btnActualizar;
-    private javax.swing.JButton btnAgregarFav;
     private javax.swing.JButton btnBloquearGenero;
     private javax.swing.JButton btnCerrarSesion;
+    private javax.swing.JButton btnFotoCentral;
+    private javax.swing.JButton btnGestionarRestricciones;
     private javax.swing.JButton btnIconoPerfil;
     private javax.swing.JButton btnLogoMenu;
-    private javax.swing.JComboBox<String> cmbTipoFav;
+    private javax.swing.JButton btnVerFavoritos;
     private javax.swing.JLabel jLabel1;
     private javax.swing.JPanel jPanel1;
     private javax.swing.JPanel jPanel2;
     private javax.swing.JLabel lblNombreUsuario;
-    private javax.swing.JTextField txtGeneroFav;
     private javax.swing.JTextField txtGeneroRestringido;
-    private javax.swing.JTextField txtIdElemento;
     private javax.swing.JTextField txtNuevoNombre;
     // End of variables declaration//GEN-END:variables
 }

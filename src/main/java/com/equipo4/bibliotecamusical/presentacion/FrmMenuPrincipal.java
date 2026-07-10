@@ -45,6 +45,9 @@ public class FrmMenuPrincipal extends javax.swing.JFrame {
     private JCheckBox chkNombreGlobal;
     private JCheckBox chkGeneroGlobal;
     private JList<Object> lstResultados;
+    private JCheckBox chkFiltroArtistas;
+    private JCheckBox chkFiltroAlbumes;
+    private JCheckBox chkFiltroCanciones;
 
     public FrmMenuPrincipal(String correo) {
         this.correoUsuarioActual = correo;
@@ -56,27 +59,36 @@ public class FrmMenuPrincipal extends javax.swing.JFrame {
         this.getContentPane().setBackground(new Color(25, 25, 25));
 
         try {
-            java.net.URL urlLogo = getClass().getResource("/imagenes/logo_musica.png");
-            if (urlLogo != null) {
-                ImageIcon iconOriginal = new ImageIcon(urlLogo);
-                java.awt.Image imgEscalada = iconOriginal.getImage().getScaledInstance(
-                        btnIconoPerfilMenu.getWidth(), btnIconoPerfilMenu.getHeight(), java.awt.Image.SCALE_SMOOTH);
-                btnIconoPerfilMenu.setIcon(new ImageIcon(imgEscalada));
-            }
-        } catch (Exception e) {
-            System.out.println("No se pudo cargar la foto de perfil en el menú: " + e.getMessage());
+        java.net.URL urlLogo = getClass().getResource("/imagenes/logo_musica.png");
+        if (urlLogo != null) {
+            ImageIcon iconOriginal = new ImageIcon(urlLogo);
+            java.awt.Image imgEscalada = iconOriginal.getImage().getScaledInstance(150, 50, java.awt.Image.SCALE_SMOOTH);
+            btnIconoPerfilMenu.setIcon(new ImageIcon(imgEscalada));
         }
+    } catch (Exception e) {
+        System.out.println("No se pudo cargar el logo en el menú: " + e.getMessage());
+    }
         try {
+        com.equipo4.bibliotecamusical.persistencia.UsuarioDAO usuarioDAO = new com.equipo4.bibliotecamusical.persistencia.UsuarioDAO(new com.equipo4.bibliotecamusical.implementaciones.ConexionDAO());
+        com.equipo4.bibliotecamusical.entidades.Usuario usuarioBD = usuarioDAO.consultarPerfilPorCorreo(correo);
+        
+        String rutaFoto = (usuarioBD != null) ? usuarioBD.getImagenPerfil() : "";
+
+        if (rutaFoto != null && !rutaFoto.isEmpty() && !rutaFoto.contains("default.png")) {
+            ImageIcon iconOriginal = new ImageIcon(rutaFoto);
+            java.awt.Image imgEscalada = iconOriginal.getImage().getScaledInstance(55, 55, java.awt.Image.SCALE_SMOOTH);
+            btnIconoPerfil.setIcon(new ImageIcon(imgEscalada));
+        } else {
             java.net.URL urlPerfil = getClass().getResource("/imagenes/imagen-de-perfil2.png");
             if (urlPerfil != null) {
                 ImageIcon iconOriginal = new ImageIcon(urlPerfil);
-                java.awt.Image imgEscalada = iconOriginal.getImage().getScaledInstance(
-                        btnIconoPerfil.getWidth(), btnIconoPerfil.getHeight(), java.awt.Image.SCALE_SMOOTH);
+                java.awt.Image imgEscalada = iconOriginal.getImage().getScaledInstance(55, 55, java.awt.Image.SCALE_SMOOTH);
                 btnIconoPerfil.setIcon(new ImageIcon(imgEscalada));
             }
-        } catch (Exception e) {
-            System.out.println("No se pudo cargar la foto de perfil: " + e.getMessage());
         }
+    } catch (Exception e) {
+        System.out.println("No se pudo cargar la foto de perfil: " + e.getMessage());
+    }
     }
 
     private void initComponents() {
@@ -176,23 +188,41 @@ public class FrmMenuPrincipal extends javax.swing.JFrame {
         panelBusqueda.setBackground(new Color(25, 25, 25));
 
         txtBuscarGlobal = new JTextField(18);
-        chkNombreGlobal = new JCheckBox("Nombre");
+        chkNombreGlobal = new JCheckBox("Nombre", true);
         chkNombreGlobal.setForeground(Color.WHITE);
         chkNombreGlobal.setOpaque(false);
         chkGeneroGlobal = new JCheckBox("Género");
         chkGeneroGlobal.setForeground(Color.WHITE);
         chkGeneroGlobal.setOpaque(false);
-        JButton btnBuscarGlobal = new JButton("Buscar");
-        btnBuscarGlobal.addActionListener(e -> buscarGlobal());
+        chkFiltroArtistas = new JCheckBox("Artistas", true); 
+    chkFiltroArtistas.setForeground(Color.WHITE);
+    chkFiltroArtistas.setOpaque(false);
 
-        JLabel lblBuscar = new JLabel("Buscar artistas, álbumes o canciones:");
-        lblBuscar.setForeground(Color.WHITE);
+    chkFiltroAlbumes = new JCheckBox("Álbumes", true);
+    chkFiltroAlbumes.setForeground(Color.WHITE);
+    chkFiltroAlbumes.setOpaque(false);
+
+    chkFiltroCanciones = new JCheckBox("Canciones", true);
+    chkFiltroCanciones.setForeground(Color.WHITE);
+    chkFiltroCanciones.setOpaque(false);
+        
+        
+        JButton btnBuscarGlobal = new JButton("Buscar");
+btnBuscarGlobal.addActionListener(e -> buscarGlobal());
+
+JLabel lblBuscar = new JLabel("Buscar artistas, álbumes o canciones:");
+lblBuscar.setForeground(Color.WHITE);
 
         panelBusqueda.add(lblBuscar);
-        panelBusqueda.add(txtBuscarGlobal);
-        panelBusqueda.add(chkNombreGlobal);
-        panelBusqueda.add(chkGeneroGlobal);
-        panelBusqueda.add(btnBuscarGlobal);
+    panelBusqueda.add(txtBuscarGlobal);
+    panelBusqueda.add(chkNombreGlobal);
+    panelBusqueda.add(chkGeneroGlobal);
+
+    panelBusqueda.add(chkFiltroArtistas);
+panelBusqueda.add(chkFiltroAlbumes);
+panelBusqueda.add(chkFiltroCanciones);
+
+panelBusqueda.add(btnBuscarGlobal);
 
         lstResultados = new JList<>(modeloResultados);
         lstResultados.setCellRenderer(new ResultadoCellRenderer(favoritoKeys));
@@ -222,21 +252,99 @@ public class FrmMenuPrincipal extends javax.swing.JFrame {
     }
 
     private void buscarGlobal() {
-        String texto = txtBuscarGlobal.getText().trim();
+    String texto = txtBuscarGlobal.getText().trim();
         boolean porNombre = chkNombreGlobal.isSelected();
         boolean porGenero = chkGeneroGlobal.isSelected();
 
         modeloResultados.clear();
-        for (Artista a : artistaDAO.buscarArtistas(texto, porNombre, porGenero)) {
-            modeloResultados.addElement(a);
+
+        if (!texto.isEmpty() && !porNombre && !porGenero) {
+            porNombre = true; 
+            chkNombreGlobal.setSelected(true);
         }
-        for (Album a : artistaDAO.buscarAlbumes(texto, porNombre, porGenero, false)) {
-            modeloResultados.addElement(a);
+
+        java.util.List<String> generosRestringidos = new java.util.ArrayList<>();
+        try {
+            com.equipo4.bibliotecamusical.persistencia.UsuarioDAO usuarioDAO = new com.equipo4.bibliotecamusical.persistencia.UsuarioDAO(new com.equipo4.bibliotecamusical.implementaciones.ConexionDAO());
+            com.equipo4.bibliotecamusical.entidades.Usuario usuarioBD = usuarioDAO.consultarPerfilPorCorreo(correoUsuarioActual);
+            
+            if (usuarioBD != null && usuarioBD.getGenerosNoDeseados() != null) {
+                generosRestringidos = usuarioBD.getGenerosNoDeseados(); 
+            }
+        } catch (Exception e) {
+            System.out.println("Error al cargar restricciones del usuario: " + e.getMessage());
         }
-        for (Cancion c : artistaDAO.buscarCanciones(texto, porNombre, porGenero)) {
-            modeloResultados.addElement(c);
+
+        boolean restriccionAplicada = false;
+
+        if (chkFiltroArtistas.isSelected()) {
+            for (Artista a : artistaDAO.buscarArtistas(texto, porNombre, porGenero)) {
+                boolean estaBloqueado = false;
+                String generoArtista = a.getGenero() != null ? a.getGenero().toLowerCase().trim() : "";
+                for (String gRestringido : generosRestringidos) {
+                    if (generoArtista.contains(gRestringido.toLowerCase().trim())) {
+                        estaBloqueado = true;
+                        break;
+                    }
+                }
+                if (!estaBloqueado) {
+                    modeloResultados.addElement(a);
+                } else {
+                    restriccionAplicada = true;
+                }
+            }
         }
-    }
+
+        if (chkFiltroAlbumes.isSelected()) {
+            for (Album a : artistaDAO.buscarAlbumes(texto, porNombre, porGenero, false)) {
+                boolean estaBloqueado = false;
+                String generoAlbum = a.getGenero() != null ? a.getGenero().toLowerCase().trim() : "";
+                for (String gRestringido : generosRestringidos) {
+                    if (generoAlbum.contains(gRestringido.toLowerCase().trim())) {
+                        estaBloqueado = true;
+                        break;
+                    }
+                }
+                if (!estaBloqueado) {
+                    modeloResultados.addElement(a);
+                } else {
+                    restriccionAplicada = true;
+                }
+            }
+        }
+
+        if (chkFiltroCanciones.isSelected()) {
+            for (Cancion c : artistaDAO.buscarCanciones(texto, porNombre, porGenero)) {
+                boolean estaBloqueado = false;
+                String generoCancion = c.getGenero() != null ? c.getGenero().toLowerCase().trim() : "";
+                for (String gRestringido : generosRestringidos) {
+                    if (generoCancion.contains(gRestringido.toLowerCase().trim())) {
+                        estaBloqueado = true;
+                        break;
+                    }
+                }
+                if (!estaBloqueado) {
+                    modeloResultados.addElement(c);
+                } else {
+                    restriccionAplicada = true;
+                }
+            }
+        }
+
+        if (modeloResultados.isEmpty()) {
+            if (restriccionAplicada) {
+                javax.swing.JOptionPane.showMessageDialog(this, 
+                    "El contenido de esta búsqueda ha sido ocultado.\nRestringido por usuario.", 
+                    "Contenido Restringido", 
+                    javax.swing.JOptionPane.WARNING_MESSAGE);
+            } else if (!texto.isEmpty()) {
+                javax.swing.JOptionPane.showMessageDialog(this, 
+                    "No se encontró ningún resultado para '" + texto + "'.", 
+                    "Sin resultados", 
+                    javax.swing.JOptionPane.INFORMATION_MESSAGE);
+            }
+        }
+}
 
     private void abrirDetalle(Object item) {
         if (item instanceof Artista a) {

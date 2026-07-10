@@ -43,7 +43,8 @@ public class FrmCatalogoArtistas extends javax.swing.JFrame {
         this.favoritoKeys = FavoritosHelper.cargarClaves(correo);
         initComponents();
         this.getContentPane().setBackground(new Color(25, 25, 25));
-        cargarArtistas(artistaDAO.listarTodos());
+        
+        buscar(); 
     }
 
     private void initComponents() {
@@ -120,9 +121,44 @@ public class FrmCatalogoArtistas extends javax.swing.JFrame {
     }
 
     private void buscar() {
-        String texto = txtBuscar.getText().trim();
+       String texto = txtBuscar.getText().trim();
         List<Artista> resultado = artistaDAO.buscarArtistas(texto, chkNombre.isSelected(), chkGenero.isSelected());
-        cargarArtistas(resultado);
+        
+        java.util.List<String> generosRestringidos = new java.util.ArrayList<>();
+        try {
+            com.equipo4.bibliotecamusical.persistencia.UsuarioDAO usuarioDAO = new com.equipo4.bibliotecamusical.persistencia.UsuarioDAO(new com.equipo4.bibliotecamusical.implementaciones.ConexionDAO());
+            com.equipo4.bibliotecamusical.entidades.Usuario usuarioBD = usuarioDAO.consultarPerfilPorCorreo(correoUsuarioActual);
+            if (usuarioBD != null && usuarioBD.getGenerosNoDeseados() != null) {
+                generosRestringidos = usuarioBD.getGenerosNoDeseados();
+            }
+        } catch (Exception e) {
+            System.out.println("Error al cargar restricciones: " + e.getMessage());
+        }
+
+        modeloLista.clear();
+        boolean restriccionAplicada = false;
+        
+        for (Artista a : resultado) {
+            boolean estaBloqueado = false;
+            String generoArtista = a.getGenero() != null ? a.getGenero().toLowerCase().trim() : "";
+            
+            for (String gRestringido : generosRestringidos) {
+                if (generoArtista.contains(gRestringido.toLowerCase().trim())) {
+                    estaBloqueado = true;
+                    break;
+                }
+            }
+            
+            if (!estaBloqueado) {
+                modeloLista.addElement(a);
+            } else {
+                restriccionAplicada = true;
+            }
+        }
+        
+        if (modeloLista.isEmpty() && restriccionAplicada && !texto.isEmpty()) {
+            javax.swing.JOptionPane.showMessageDialog(this, "El contenido ha sido ocultado.\nRestringido por usuario.", "Aviso", javax.swing.JOptionPane.WARNING_MESSAGE);
+        }
     }
 
     private void cargarArtistas(List<Artista> artistas) {

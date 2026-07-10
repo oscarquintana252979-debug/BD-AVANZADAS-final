@@ -14,4 +14,5 @@ public interface IUsuarioDAO {
     void agregarAFavoritos(String correoUsuario, String tipo, String elementoId, String genero)
             throws GeneroRestringidoException, ElementoNoEncontradoException;
     void eliminarDeFavoritos(String correoUsuario, String tipo, String elementoId);
+    void removerGeneroNoDeseado(String correo, String generoARemover);
 }

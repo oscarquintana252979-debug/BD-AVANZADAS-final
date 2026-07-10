@@ -125,9 +125,39 @@ public class FrmCatalogoAlbumes extends javax.swing.JFrame {
     private void buscar() {
         String texto = txtBuscar.getText().trim();
         List<Album> resultado = artistaDAO.buscarAlbumes(texto, chkNombre.isSelected(), chkGenero.isSelected(), chkFecha.isSelected());
+        
+        java.util.List<String> generosRestringidos = new java.util.ArrayList<>();
+        try {
+            com.equipo4.bibliotecamusical.persistencia.UsuarioDAO usuarioDAO = new com.equipo4.bibliotecamusical.persistencia.UsuarioDAO(new com.equipo4.bibliotecamusical.implementaciones.ConexionDAO());
+            com.equipo4.bibliotecamusical.entidades.Usuario usuarioBD = usuarioDAO.consultarPerfilPorCorreo(correoUsuarioActual);
+            if (usuarioBD != null && usuarioBD.getGenerosNoDeseados() != null) {
+                generosRestringidos = usuarioBD.getGenerosNoDeseados();
+            }
+        } catch (Exception e) {
+            System.out.println("Error al cargar restricciones: " + e.getMessage());
+        }
+
         modeloLista.clear();
+        boolean restriccionAplicada = false;
+        
         for (Album a : resultado) {
-            modeloLista.addElement(a);
+            boolean estaBloqueado = false;
+            String generoAlbum = a.getGenero() != null ? a.getGenero().toLowerCase().trim() : "";
+            for (String gRestringido : generosRestringidos) {
+                if (generoAlbum.contains(gRestringido.toLowerCase().trim())) {
+                    estaBloqueado = true;
+                    break;
+                }
+            }
+            if (!estaBloqueado) {
+                modeloLista.addElement(a);
+            } else {
+                restriccionAplicada = true;
+            }
+        }
+        
+        if (modeloLista.isEmpty() && restriccionAplicada && !texto.isEmpty()) {
+            javax.swing.JOptionPane.showMessageDialog(this, "El contenido ha sido ocultado.\nRestringido por usuario.", "Aviso", javax.swing.JOptionPane.WARNING_MESSAGE);
         }
     }
 

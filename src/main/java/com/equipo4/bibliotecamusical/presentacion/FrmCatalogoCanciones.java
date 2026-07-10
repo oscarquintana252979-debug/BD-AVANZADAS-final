@@ -118,9 +118,39 @@ public class FrmCatalogoCanciones extends javax.swing.JFrame {
     private void buscar() {
         String texto = txtBuscar.getText().trim();
         List<Cancion> resultado = artistaDAO.buscarCanciones(texto, chkNombre.isSelected(), chkGenero.isSelected());
+        
+        java.util.List<String> generosRestringidos = new java.util.ArrayList<>();
+        try {
+            com.equipo4.bibliotecamusical.persistencia.UsuarioDAO usuarioDAO = new com.equipo4.bibliotecamusical.persistencia.UsuarioDAO(new com.equipo4.bibliotecamusical.implementaciones.ConexionDAO());
+            com.equipo4.bibliotecamusical.entidades.Usuario usuarioBD = usuarioDAO.consultarPerfilPorCorreo(correoUsuarioActual);
+            if (usuarioBD != null && usuarioBD.getGenerosNoDeseados() != null) {
+                generosRestringidos = usuarioBD.getGenerosNoDeseados();
+            }
+        } catch (Exception e) {
+            System.out.println("Error al cargar restricciones: " + e.getMessage());
+        }
+
         modeloLista.clear();
+        boolean restriccionAplicada = false;
+        
         for (Cancion c : resultado) {
-            modeloLista.addElement(c);
+            boolean estaBloqueado = false;
+            String generoCancion = c.getGenero() != null ? c.getGenero().toLowerCase().trim() : "";
+            for (String gRestringido : generosRestringidos) {
+                if (generoCancion.contains(gRestringido.toLowerCase().trim())) {
+                    estaBloqueado = true;
+                    break;
+                }
+            }
+            if (!estaBloqueado) {
+                modeloLista.addElement(c);
+            } else {
+                restriccionAplicada = true;
+            }
+        }
+        
+        if (modeloLista.isEmpty() && restriccionAplicada && !texto.isEmpty()) {
+            javax.swing.JOptionPane.showMessageDialog(this, "El contenido ha sido ocultado.\nRestringido por usuario.", "Aviso", javax.swing.JOptionPane.WARNING_MESSAGE);
         }
     }
 

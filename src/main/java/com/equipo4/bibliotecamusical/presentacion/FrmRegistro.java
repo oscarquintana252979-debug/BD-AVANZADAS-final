@@ -4,6 +4,8 @@
  */
 package com.equipo4.bibliotecamusical.presentacion;
 
+import javax.swing.ImageIcon;
+
 /**
  *
  * @author oscar
@@ -21,7 +23,7 @@ public class FrmRegistro extends javax.swing.JFrame {
     txtContrasena.setEchoChar((char) 0);
         this.getContentPane().setBackground(new java.awt.Color(25, 25, 25));
     }
-
+private String rutaImagenRegistro = "";
     /**
      * This method is called from within the constructor to initialize the form.
      * WARNING: Do NOT modify this code. The content of this method is always
@@ -36,6 +38,8 @@ public class FrmRegistro extends javax.swing.JFrame {
         txtContrasena = new javax.swing.JPasswordField();
         btnRegistrar = new javax.swing.JButton();
         jButton1 = new javax.swing.JButton();
+        btnSeleccionarImagen = new javax.swing.JButton();
+        lblRutaImagen = new javax.swing.JLabel();
 
         setDefaultCloseOperation(javax.swing.WindowConstants.EXIT_ON_CLOSE);
         setBackground(new java.awt.Color(25, 25, 25));
@@ -84,6 +88,9 @@ public class FrmRegistro extends javax.swing.JFrame {
         jButton1.setText("Cancelar");
         jButton1.addActionListener(this::jButton1ActionPerformed);
 
+        btnSeleccionarImagen.setText("Seleccionar Imagen (Opcional)");
+        btnSeleccionarImagen.addActionListener(this::btnSeleccionarImagenActionPerformed);
+
         javax.swing.GroupLayout layout = new javax.swing.GroupLayout(getContentPane());
         getContentPane().setLayout(layout);
         layout.setHorizontalGroup(
@@ -91,30 +98,47 @@ public class FrmRegistro extends javax.swing.JFrame {
             .addGroup(layout.createSequentialGroup()
                 .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                     .addGroup(layout.createSequentialGroup()
-                        .addGap(123, 123, 123)
-                        .addComponent(txtNombre, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
-                    .addComponent(jButton1)
-                    .addGroup(layout.createSequentialGroup()
                         .addGap(144, 144, 144)
-                        .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                            .addComponent(txtCorreo, javax.swing.GroupLayout.PREFERRED_SIZE, 124, javax.swing.GroupLayout.PREFERRED_SIZE)
-                            .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, layout.createSequentialGroup()
-                                .addComponent(txtContrasena, javax.swing.GroupLayout.PREFERRED_SIZE, 94, javax.swing.GroupLayout.PREFERRED_SIZE)
-                                .addGap(18, 18, 18))
-                            .addComponent(btnRegistrar, javax.swing.GroupLayout.PREFERRED_SIZE, 116, javax.swing.GroupLayout.PREFERRED_SIZE))))
-                .addContainerGap(98, Short.MAX_VALUE))
+                        .addComponent(btnRegistrar, javax.swing.GroupLayout.PREFERRED_SIZE, 116, javax.swing.GroupLayout.PREFERRED_SIZE))
+                    .addGroup(layout.createSequentialGroup()
+                        .addComponent(jButton1)
+                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, 73, Short.MAX_VALUE)
+                        .addComponent(lblRutaImagen, javax.swing.GroupLayout.PREFERRED_SIZE, 114, javax.swing.GroupLayout.PREFERRED_SIZE)))
+                .addGap(137, 137, 137))
+            .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, layout.createSequentialGroup()
+                .addGap(0, 0, Short.MAX_VALUE)
+                .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.TRAILING)
+                    .addComponent(btnSeleccionarImagen)
+                    .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                        .addComponent(txtNombre, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                        .addGroup(layout.createSequentialGroup()
+                            .addGap(21, 21, 21)
+                            .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                                .addComponent(txtCorreo, javax.swing.GroupLayout.PREFERRED_SIZE, 124, javax.swing.GroupLayout.PREFERRED_SIZE)
+                                .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, layout.createSequentialGroup()
+                                    .addComponent(txtContrasena, javax.swing.GroupLayout.PREFERRED_SIZE, 94, javax.swing.GroupLayout.PREFERRED_SIZE)
+                                    .addGap(18, 18, 18))))))
+                .addGap(90, 90, 90))
         );
         layout.setVerticalGroup(
             layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(layout.createSequentialGroup()
-                .addComponent(jButton1)
-                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, 91, Short.MAX_VALUE)
+                .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                    .addGroup(layout.createSequentialGroup()
+                        .addComponent(jButton1)
+                        .addGap(0, 0, Short.MAX_VALUE))
+                    .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, layout.createSequentialGroup()
+                        .addGap(0, 14, Short.MAX_VALUE)
+                        .addComponent(lblRutaImagen, javax.swing.GroupLayout.PREFERRED_SIZE, 81, javax.swing.GroupLayout.PREFERRED_SIZE)))
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                .addComponent(btnSeleccionarImagen)
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
                 .addComponent(txtNombre, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
                 .addComponent(txtCorreo, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
                 .addGap(18, 18, 18)
                 .addComponent(txtContrasena, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addGap(34, 34, 34)
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
                 .addComponent(btnRegistrar)
                 .addGap(33, 33, 33))
         );
@@ -128,53 +152,48 @@ public class FrmRegistro extends javax.swing.JFrame {
 
     private void btnRegistrarActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnRegistrarActionPerformed
 try {
-    String nombre = txtNombre.getText().trim();
-    String correo = txtCorreo.getText().trim();
-    if (!esCorreoValido(correo)) {
-    javax.swing.JOptionPane.showMessageDialog(this, 
-            "El formato del correo electrónico no es válido. Por favor ingresa uno real (ejemplo@dominio.com).", 
-            "Formato Incorrecto", 
-            javax.swing.JOptionPane.WARNING_MESSAGE);
-    return;
-}
-    String contrasena = new String(txtContrasena.getPassword()); 
+        String nombre = txtNombre.getText().trim();
+        String correo = txtCorreo.getText().trim();
+        
+        if (!esCorreoValido(correo)) {
+            javax.swing.JOptionPane.showMessageDialog(this, 
+                    "El formato del correo electrónico no es válido. Por favor ingresa uno real (ejemplo@dominio.com).", 
+                    "Formato Incorrecto", 
+                    javax.swing.JOptionPane.WARNING_MESSAGE);
+            return;
+        }
+        
+        String contrasena = new String(txtContrasena.getPassword()); 
 
-    if (nombre.isEmpty() || correo.isEmpty() || contrasena.isEmpty()) {
-        javax.swing.JOptionPane.showMessageDialog(this, "Por favor, llena todos los campos.", "Advertencia", javax.swing.JOptionPane.WARNING_MESSAGE);
-        return;
-    }
-javax.swing.JOptionPane.showMessageDialog(this, 
-        "¡Cuenta creada con éxito! Ahora puedes iniciar sesión.", 
-        "Registro Exitoso", 
-        javax.swing.JOptionPane.INFORMATION_MESSAGE);
+        if (nombre.isEmpty() || correo.isEmpty() || contrasena.isEmpty()) {
+            javax.swing.JOptionPane.showMessageDialog(this, "Por favor, llena todos los campos.", "Advertencia", javax.swing.JOptionPane.WARNING_MESSAGE);
+            return;
+        }
 
-try {
-    FrmLogin pantallaLogin = new FrmLogin();
-    pantallaLogin.setVisible(true);
-    
-    this.dispose();
-    
-} catch (Exception ex) {
-    System.out.println("Error al redirigir al login: " + ex.getMessage());
-}
-    com.equipo4.bibliotecamusical.entidades.Usuario nuevoUsuario = new com.equipo4.bibliotecamusical.entidades.Usuario();
-    nuevoUsuario.setNombreUsuario(nombre);
-    nuevoUsuario.setCorreo(correo);
-    nuevoUsuario.setContrasena(contrasena);
-    nuevoUsuario.setImagenPerfil("img/perfiles/imagen-de-perfil2.png");
+        String imagenFinal = rutaImagenRegistro.isEmpty() ? "/imagenes/imagen-de-perfil2.png" : rutaImagenRegistro;
 
-    com.equipo4.bibliotecamusical.persistencia.UsuarioDAO usuarioDAO = new com.equipo4.bibliotecamusical.persistencia.UsuarioDAO(new com.equipo4.bibliotecamusical.implementaciones.ConexionDAO());
-    usuarioDAO.registrarUsuario(nuevoUsuario);
 
-    javax.swing.JOptionPane.showMessageDialog(this, "¡Registro exitoso! Cuenta creada correctamente.", "Éxito", javax.swing.JOptionPane.INFORMATION_MESSAGE);
-    
-    txtNombre.setText("");
-    txtCorreo.setText("");
-    txtContrasena.setText("");
+        com.equipo4.bibliotecamusical.entidades.Usuario nuevoUsuario = new com.equipo4.bibliotecamusical.entidades.Usuario();
+        nuevoUsuario.setNombreUsuario(nombre);
+        nuevoUsuario.setCorreo(correo);
+        nuevoUsuario.setContrasena(contrasena);
+        nuevoUsuario.setImagenPerfil(imagenFinal);
 
-} catch (Exception ex) {
-    javax.swing.JOptionPane.showMessageDialog(this, "Error al guardar en la base de datos: " + ex.getMessage(), "Error", javax.swing.JOptionPane.ERROR_MESSAGE);
-}        // TODO add your handling code here:
+        com.equipo4.bibliotecamusical.persistencia.UsuarioDAO usuarioDAO = new com.equipo4.bibliotecamusical.persistencia.UsuarioDAO(new com.equipo4.bibliotecamusical.implementaciones.ConexionDAO());
+        usuarioDAO.registrarUsuario(nuevoUsuario);
+
+        javax.swing.JOptionPane.showMessageDialog(this, 
+                "¡Registro exitoso! Cuenta creada correctamente. Ahora puedes iniciar sesión.", 
+                "Éxito", 
+                javax.swing.JOptionPane.INFORMATION_MESSAGE);
+        
+        FrmLogin pantallaLogin = new FrmLogin();
+        pantallaLogin.setVisible(true);
+        this.dispose();
+
+    } catch (Exception ex) {
+        javax.swing.JOptionPane.showMessageDialog(this, "Error al guardar en la base de datos: " + ex.getMessage(), "Error", javax.swing.JOptionPane.ERROR_MESSAGE);
+    }   // TODO add your handling code here:
     }//GEN-LAST:event_btnRegistrarActionPerformed
 
     private void jButton1ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButton1ActionPerformed
@@ -225,6 +244,29 @@ try {
     txtContrasena.setEchoChar((char) 0); 
 }
     }//GEN-LAST:event_txtContrasenaFocusLost
+private String rutaImagenSeleccionada = "";
+    private void btnSeleccionarImagenActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnSeleccionarImagenActionPerformed
+        javax.swing.JFileChooser selector = new javax.swing.JFileChooser();
+    javax.swing.filechooser.FileNameExtensionFilter filtro = new javax.swing.filechooser.FileNameExtensionFilter("Imágenes (*.png, *.jpg)", "png", "jpg", "jpeg");
+    selector.setFileFilter(filtro);
+
+    if (selector.showOpenDialog(this) == javax.swing.JFileChooser.APPROVE_OPTION) {
+        rutaImagenRegistro = selector.getSelectedFile().getAbsolutePath();
+        
+        try {
+            ImageIcon iconOriginal = new ImageIcon(rutaImagenRegistro);
+            
+            java.awt.Image imgEscalada = iconOriginal.getImage().getScaledInstance(
+                    lblRutaImagen.getWidth(), lblRutaImagen.getHeight(), java.awt.Image.SCALE_SMOOTH);
+            
+            lblRutaImagen.setIcon(new ImageIcon(imgEscalada));
+            lblRutaImagen.setText(""); 
+            
+        } catch (Exception e) {
+            System.out.println("No se pudo cargar la vista previa: " + e.getMessage());
+        }
+    }
+    }//GEN-LAST:event_btnSeleccionarImagenActionPerformed
 
     /**
      * @param args the command line arguments
@@ -258,7 +300,9 @@ public static boolean esCorreoValido(String correo) {
 }
     // Variables declaration - do not modify//GEN-BEGIN:variables
     private javax.swing.JButton btnRegistrar;
+    private javax.swing.JButton btnSeleccionarImagen;
     private javax.swing.JButton jButton1;
+    private javax.swing.JLabel lblRutaImagen;
     private javax.swing.JPasswordField txtContrasena;
     private javax.swing.JTextField txtCorreo;
     private javax.swing.JTextField txtNombre;
