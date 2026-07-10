@@ -157,13 +157,13 @@ try {
 } catch (Exception ex) {
     System.out.println("Error al redirigir al login: " + ex.getMessage());
 }
-    com.equipo4.bibliotecamusical.dominio.Usuario nuevoUsuario = new com.equipo4.bibliotecamusical.dominio.Usuario();
+    com.equipo4.bibliotecamusical.entidades.Usuario nuevoUsuario = new com.equipo4.bibliotecamusical.entidades.Usuario();
     nuevoUsuario.setNombreUsuario(nombre);
-    nuevoUsuario.setCorreoElectronico(correo);
+    nuevoUsuario.setCorreo(correo);
     nuevoUsuario.setContrasena(contrasena);
-    nuevoUsuario.setImagenPerfil("img/perfiles/imagen-de-perfil2.png"); 
+    nuevoUsuario.setImagenPerfil("img/perfiles/imagen-de-perfil2.png");
 
-    com.equipo4.bibliotecamusical.persistencia.UsuarioDAO usuarioDAO = new com.equipo4.bibliotecamusical.persistencia.UsuarioDAO();
+    com.equipo4.bibliotecamusical.persistencia.UsuarioDAO usuarioDAO = new com.equipo4.bibliotecamusical.persistencia.UsuarioDAO(new com.equipo4.bibliotecamusical.implementaciones.ConexionDAO());
     usuarioDAO.registrarUsuario(nuevoUsuario);
 
     javax.swing.JOptionPane.showMessageDialog(this, "¡Registro exitoso! Cuenta creada correctamente.", "Éxito", javax.swing.JOptionPane.INFORMATION_MESSAGE);

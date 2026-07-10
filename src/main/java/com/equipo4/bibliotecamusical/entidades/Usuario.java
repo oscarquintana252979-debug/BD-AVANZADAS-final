@@ -1,19 +1,19 @@
-/*
- * Click nbfs://nbhost/SystemFileSystem/Templates/Licenses/license-default.txt to change this license
- * Click nbfs://nbhost/SystemFileSystem/Templates/Classes/Class.java to edit this template
- */
-package com.equipo4.bibliotecamusical.dominio;
+package com.equipo4.bibliotecamusical.entidades;
+
+import java.util.ArrayList;
+import java.util.List;
+import org.bson.codecs.pojo.annotations.BsonId;
 import org.bson.types.ObjectId;
-/**
- *
- * @author oscar
- */
+
 public class Usuario {
+    @BsonId
     private ObjectId id;
     private String nombreUsuario;
-    private String correoElectronico;
+    private String correo;
     private String contrasena;
     private String imagenPerfil;
+    private List<String> generosNoDeseados = new ArrayList<>();
+    private List<Favorito> favoritos = new ArrayList<>();
 
     public Usuario() {}
 
@@ -33,12 +33,12 @@ public class Usuario {
         this.nombreUsuario = nombreUsuario;
     }
 
-    public String getCorreoElectronico() {
-        return correoElectronico;
+    public String getCorreo() {
+        return correo;
     }
 
-    public void setCorreoElectronico(String correoElectronico) {
-        this.correoElectronico = correoElectronico;
+    public void setCorreo(String correo) {
+        this.correo = correo;
     }
 
     public String getContrasena() {
@@ -56,5 +56,20 @@ public class Usuario {
     public void setImagenPerfil(String imagenPerfil) {
         this.imagenPerfil = imagenPerfil;
     }
-    
+
+    public List<String> getGenerosNoDeseados() {
+        return generosNoDeseados;
+    }
+
+    public void setGenerosNoDeseados(List<String> generosNoDeseados) {
+        this.generosNoDeseados = generosNoDeseados;
+    }
+
+    public List<Favorito> getFavoritos() {
+        return favoritos;
+    }
+
+    public void setFavoritos(List<Favorito> favoritos) {
+        this.favoritos = favoritos;
+    }
 }

@@ -142,15 +142,15 @@ try {
         return;
     }
 
-    com.equipo4.bibliotecamusical.persistencia.UsuarioDAO usuarioDAO = new com.equipo4.bibliotecamusical.persistencia.UsuarioDAO();
+    com.equipo4.bibliotecamusical.persistencia.UsuarioDAO usuarioDAO = new com.equipo4.bibliotecamusical.persistencia.UsuarioDAO(new com.equipo4.bibliotecamusical.implementaciones.ConexionDAO());
     boolean accesoConcedido = usuarioDAO.iniciarSesion(correo, contrasena);
 
     if (accesoConcedido) {
         javax.swing.JOptionPane.showMessageDialog(this, "¡Bienvenido a la Biblioteca Musical!", "Acceso concedido", javax.swing.JOptionPane.INFORMATION_MESSAGE);
-        
-        FrmPerfil pantallaPerfil = new FrmPerfil(correo);
-        pantallaPerfil.setVisible(true);
-        
+
+        FrmMenuPrincipal pantallaMenu = new FrmMenuPrincipal(correo);
+        pantallaMenu.setVisible(true);
+
         this.dispose();
                 
     } else {

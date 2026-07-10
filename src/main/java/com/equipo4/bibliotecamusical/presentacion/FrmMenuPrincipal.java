@@ -11,20 +11,20 @@ import javax.swing.ImageIcon;
  * @author oscar
  */
 public class FrmMenuPrincipal extends javax.swing.JFrame {
-    
+
     private static final java.util.logging.Logger logger = java.util.logging.Logger.getLogger(FrmMenuPrincipal.class.getName());
 private String correoUsuarioActual;
 
     public FrmMenuPrincipal(String correo) {
         initComponents();
-        
+
         this.correoUsuarioActual = correo;
         btnIconoPerfilMenu.setCursor(new java.awt.Cursor(java.awt.Cursor.HAND_CURSOR));
         btnIconoPerfil.setCursor(new java.awt.Cursor(java.awt.Cursor.HAND_CURSOR));
         this.getContentPane().setBackground(new java.awt.Color(25, 25, 25));
-        
+
         try {
-            
+
             java.net.URL urlPerfil = getClass().getResource("/imagenes/logo_musica.png");
             if (urlPerfil != null) {
                 ImageIcon iconOriginal = new ImageIcon(urlPerfil);
@@ -48,7 +48,7 @@ private String correoUsuarioActual;
     System.out.println("No se pudo cargar la foto de perfil: " + e.getMessage());
 }
     }
-    
+
 
     /**
      * This method is called from within the constructor to initialize the form.
@@ -62,6 +62,9 @@ private String correoUsuarioActual;
         btnIconoPerfilMenu = new javax.swing.JButton();
         jLabel1 = new javax.swing.JLabel();
         btnIconoPerfil = new javax.swing.JButton();
+        btnCatalogoArtistas = new javax.swing.JButton();
+        btnCatalogoAlbumes = new javax.swing.JButton();
+        btnPoblarArtistas = new javax.swing.JButton();
 
         setDefaultCloseOperation(javax.swing.WindowConstants.EXIT_ON_CLOSE);
 
@@ -76,6 +79,21 @@ private String correoUsuarioActual;
         btnIconoPerfil.setContentAreaFilled(false);
         btnIconoPerfil.addActionListener(this::btnIconoPerfilActionPerformed);
 
+        btnCatalogoArtistas.setBackground(new java.awt.Color(255, 0, 255));
+        btnCatalogoArtistas.setForeground(new java.awt.Color(255, 255, 255));
+        btnCatalogoArtistas.setText("Catálogo de Artistas");
+        btnCatalogoArtistas.addActionListener(this::btnCatalogoArtistasActionPerformed);
+
+        btnCatalogoAlbumes.setBackground(new java.awt.Color(255, 0, 255));
+        btnCatalogoAlbumes.setForeground(new java.awt.Color(255, 255, 255));
+        btnCatalogoAlbumes.setText("Catálogo de Álbumes");
+        btnCatalogoAlbumes.addActionListener(this::btnCatalogoAlbumesActionPerformed);
+
+        btnPoblarArtistas.setBackground(new java.awt.Color(60, 60, 60));
+        btnPoblarArtistas.setForeground(new java.awt.Color(255, 255, 255));
+        btnPoblarArtistas.setText("Poblar Artistas (demo)");
+        btnPoblarArtistas.addActionListener(this::btnPoblarArtistasActionPerformed);
+
         javax.swing.GroupLayout layout = new javax.swing.GroupLayout(getContentPane());
         getContentPane().setLayout(layout);
         layout.setHorizontalGroup(
@@ -89,6 +107,13 @@ private String correoUsuarioActual;
                 .addGap(141, 141, 141)
                 .addComponent(jLabel1)
                 .addContainerGap(149, Short.MAX_VALUE))
+            .addGroup(layout.createSequentialGroup()
+                .addGap(40, 40, 40)
+                .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                    .addComponent(btnCatalogoArtistas, javax.swing.GroupLayout.PREFERRED_SIZE, 220, javax.swing.GroupLayout.PREFERRED_SIZE)
+                    .addComponent(btnCatalogoAlbumes, javax.swing.GroupLayout.PREFERRED_SIZE, 220, javax.swing.GroupLayout.PREFERRED_SIZE)
+                    .addComponent(btnPoblarArtistas, javax.swing.GroupLayout.PREFERRED_SIZE, 220, javax.swing.GroupLayout.PREFERRED_SIZE))
+                .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
         );
         layout.setVerticalGroup(
             layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
@@ -98,7 +123,13 @@ private String correoUsuarioActual;
                     .addComponent(btnIconoPerfil, javax.swing.GroupLayout.PREFERRED_SIZE, 55, javax.swing.GroupLayout.PREFERRED_SIZE))
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
                 .addComponent(jLabel1)
-                .addGap(0, 217, Short.MAX_VALUE))
+                .addGap(40, 40, 40)
+                .addComponent(btnCatalogoArtistas)
+                .addGap(18, 18, 18)
+                .addComponent(btnCatalogoAlbumes)
+                .addGap(30, 30, 30)
+                .addComponent(btnPoblarArtistas)
+                .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
         );
 
         pack();
@@ -108,7 +139,7 @@ private String correoUsuarioActual;
         try {
     FrmMenuPrincipal menu = new FrmMenuPrincipal(this.correoUsuarioActual);
     menu.setVisible(true);
-    
+
     this.dispose();
 } catch (Exception ex) {
     System.out.println("Error al abrir el menú: " + ex.getMessage());
@@ -127,14 +158,54 @@ private String correoUsuarioActual;
         }
     }//GEN-LAST:event_btnIconoPerfilActionPerformed
 
+    private void btnCatalogoArtistasActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnCatalogoArtistasActionPerformed
+        try {
+            FrmCatalogoArtistas pantallaCatalogo = new FrmCatalogoArtistas(this.correoUsuarioActual);
+            pantallaCatalogo.setVisible(true);
+
+            this.dispose();
+        } catch (Exception ex) {
+            System.out.println("Error al abrir el catálogo de artistas: " + ex.getMessage());
+        }
+    }//GEN-LAST:event_btnCatalogoArtistasActionPerformed
+
+    private void btnCatalogoAlbumesActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnCatalogoAlbumesActionPerformed
+        try {
+            FrmCatalogoAlbumes pantallaCatalogo = new FrmCatalogoAlbumes(this.correoUsuarioActual);
+            pantallaCatalogo.setVisible(true);
+
+            this.dispose();
+        } catch (Exception ex) {
+            System.out.println("Error al abrir el catálogo de álbumes: " + ex.getMessage());
+        }
+    }//GEN-LAST:event_btnCatalogoAlbumesActionPerformed
+
+    private void btnPoblarArtistasActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnPoblarArtistasActionPerformed
+        int confirmacion = javax.swing.JOptionPane.showConfirmDialog(this,
+                "Esto BORRARÁ la colección 'artistas' actual y la reemplazará con 30 solistas + 30 bandas de prueba. ¿Continuar?",
+                "Confirmar poblado de datos", javax.swing.JOptionPane.YES_NO_OPTION, javax.swing.JOptionPane.WARNING_MESSAGE);
+        if (confirmacion != javax.swing.JOptionPane.YES_OPTION) {
+            return;
+        }
+        try {
+            new com.equipo4.bibliotecamusical.persistencia.ArtistaDAO(new com.equipo4.bibliotecamusical.implementaciones.ConexionDAO()).poblarArtistasDePrueba();
+            javax.swing.JOptionPane.showMessageDialog(this, "Se insertaron 60 artistas, 120 álbumes y 360 canciones.", "Éxito", javax.swing.JOptionPane.INFORMATION_MESSAGE);
+        } catch (com.equipo4.bibliotecamusical.excepciones.PersistenciaException ex) {
+            javax.swing.JOptionPane.showMessageDialog(this, "Error al poblar datos: " + ex.getMessage(), "Error", javax.swing.JOptionPane.ERROR_MESSAGE);
+        }
+    }//GEN-LAST:event_btnPoblarArtistasActionPerformed
+
     /**
      * @param args the command line arguments
      */
-    
+
 
     // Variables declaration - do not modify//GEN-BEGIN:variables
+    private javax.swing.JButton btnCatalogoAlbumes;
+    private javax.swing.JButton btnCatalogoArtistas;
     private javax.swing.JButton btnIconoPerfil;
     private javax.swing.JButton btnIconoPerfilMenu;
+    private javax.swing.JButton btnPoblarArtistas;
     private javax.swing.JLabel jLabel1;
     // End of variables declaration//GEN-END:variables
 }

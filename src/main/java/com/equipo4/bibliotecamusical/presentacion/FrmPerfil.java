@@ -54,12 +54,11 @@ try {
     
     private void cargarDatosPerfil() {
         try {
-            com.equipo4.bibliotecamusical.persistencia.UsuarioDAO usuarioDAO = new com.equipo4.bibliotecamusical.persistencia.UsuarioDAO();
-            org.bson.Document datosUsuario = usuarioDAO.consultarPerfilPorCorreo(correoUsuarioActual);
-            
+            com.equipo4.bibliotecamusical.persistencia.UsuarioDAO usuarioDAO = new com.equipo4.bibliotecamusical.persistencia.UsuarioDAO(new com.equipo4.bibliotecamusical.implementaciones.ConexionDAO());
+            com.equipo4.bibliotecamusical.entidades.Usuario datosUsuario = usuarioDAO.consultarPerfilPorCorreo(correoUsuarioActual);
+
             if (datosUsuario != null) {
-                String nombre = datosUsuario.getString("nombreUsuario");
-                lblNombreUsuario.setText("¡Hola, " + nombre + "!");
+                lblNombreUsuario.setText("¡Hola, " + datosUsuario.getNombreUsuario() + "!");
             }
         } catch (Exception ex) {
             System.out.println("Error al cargar el perfil: " + ex.getMessage());
@@ -289,8 +288,8 @@ try {
         return;
     }
 
-    com.equipo4.bibliotecamusical.persistencia.UsuarioDAO usuarioDAO = new com.equipo4.bibliotecamusical.persistencia.UsuarioDAO();
-    
+    com.equipo4.bibliotecamusical.persistencia.UsuarioDAO usuarioDAO = new com.equipo4.bibliotecamusical.persistencia.UsuarioDAO(new com.equipo4.bibliotecamusical.implementaciones.ConexionDAO());
+
     usuarioDAO.actualizarPerfil(correoUsuarioActual, nuevoNombre, "img/perfiles/default.png");
 
     lblNombreUsuario.setText("¡Hola, " + nuevoNombre + "!");
@@ -312,7 +311,7 @@ try {
         return;
     }
 
-    com.equipo4.bibliotecamusical.persistencia.UsuarioDAO usuarioDAO = new com.equipo4.bibliotecamusical.persistencia.UsuarioDAO();
+    com.equipo4.bibliotecamusical.persistencia.UsuarioDAO usuarioDAO = new com.equipo4.bibliotecamusical.persistencia.UsuarioDAO(new com.equipo4.bibliotecamusical.implementaciones.ConexionDAO());
     usuarioDAO.agregarGeneroNoDeseado(correoUsuarioActual, genero);
 
     txtGeneroRestringido.setText("");
@@ -334,44 +333,18 @@ try {
             return;
         }
 
-        try (com.mongodb.client.MongoClient mongoClient = com.mongodb.client.MongoClients.create("mongodb://localhost:27017")) {
-            com.mongodb.client.MongoDatabase database = mongoClient.getDatabase("bibliotecaMusical4");
-            
-            com.mongodb.client.MongoCollection<org.bson.Document> coleccionArtistas = database.getCollection("artistas");
-            
-            org.bson.Document elementoEncontrado = coleccionArtistas.find(
-                    new org.bson.Document("_id", new org.bson.types.ObjectId(idIngresado))
-            ).first();
+        com.equipo4.bibliotecamusical.persistencia.UsuarioDAO usuarioDAO = new com.equipo4.bibliotecamusical.persistencia.UsuarioDAO(new com.equipo4.bibliotecamusical.implementaciones.ConexionDAO());
+        usuarioDAO.agregarAFavoritos(this.correoUsuarioActual, tipoSeleccionado, idIngresado, generoIngresado);
 
-            if (elementoEncontrado == null) {
-                javax.swing.JOptionPane.showMessageDialog(this, "No se encontró ningún elemento con ese ID en la base de datos.");
-                return;
-            }
+        javax.swing.JOptionPane.showMessageDialog(this, "¡Agregado a favoritos!");
 
-            String nombreEncontrado = elementoEncontrado.getString("nombre");
-
-            org.bson.Document nuevoFavorito = new org.bson.Document("_id", new org.bson.types.ObjectId())
-                    .append("tipo", tipoSeleccionado)
-                    .append("elementoId", new org.bson.types.ObjectId(idIngresado))
-                    .append("nombre", nombreEncontrado)
-                    .append("genero", generoIngresado)
-                    .append("fechaAgregacion", new java.util.Date());
-
-            com.mongodb.client.MongoCollection<org.bson.Document> coleccionUsuarios = database.getCollection("usuarios");
-            
-            coleccionUsuarios.updateOne(
-                    new org.bson.Document("correo", this.correoUsuarioActual),
-                    new org.bson.Document("$push", new org.bson.Document("favoritos", nuevoFavorito))
-            );
-
-            javax.swing.JOptionPane.showMessageDialog(this, "¡'" + nombreEncontrado + "' agregado a favoritos!");
-            
-            txtIdElemento.setText("ID del artista o canción");
-            txtGeneroFav.setText("género");
-        }
+        txtIdElemento.setText("ID del artista o canción");
+        txtGeneroFav.setText("género");
 
     } catch (IllegalArgumentException e) {
         javax.swing.JOptionPane.showMessageDialog(this, "El ID ingresado no tiene un formato válido de MongoDB.");
+    } catch (com.equipo4.bibliotecamusical.excepciones.GeneroRestringidoException | com.equipo4.bibliotecamusical.excepciones.ElementoNoEncontradoException ex) {
+        javax.swing.JOptionPane.showMessageDialog(this, ex.getMessage());
     } catch (Exception ex) {
         javax.swing.JOptionPane.showMessageDialog(this, "Error al agregar a favoritos: " + ex.getMessage());
     }
